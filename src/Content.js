@@ -12,7 +12,7 @@ const Loading = () => {
   );
 };
 
-const renderContent = location => {
+const renderContent = (user, location) => {
   switch (location) {
     case "/map":
       return (
@@ -35,9 +35,10 @@ const renderContent = location => {
           <div
             css={css`
               height: 100px;
-              width: calc(100% - 20px);
+              width: calc(100% - 10px);
               background-color: blue;
-              margin: 10px;
+              margin: 5px;
+              color: white;
             `}
           >
             boo
@@ -45,18 +46,20 @@ const renderContent = location => {
         </>
       );
     case "/account":
-      return <Account />;
+      return <Account user={user} />;
     default:
       return <div>home home home</div>;
   }
 };
 
 const Content = props => {
-  const { user, location } = props;
+  const { user, userRef, location } = props;
 
   return (
     <div>
-      <Suspense fallback={<Loading />}>{renderContent(location)}</Suspense>
+      <Suspense fallback={<Loading />}>
+        {renderContent(user, location)}
+      </Suspense>
     </div>
   );
 };

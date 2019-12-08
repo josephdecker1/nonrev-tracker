@@ -20,7 +20,11 @@ export const AuthenticatedUser = props => {
         padding: 0px;
       `}
     >
-      <Content user={user} location={history.location.pathname} />
+      <Content
+        user={user}
+        userRef={userRef}
+        location={history.location.pathname}
+      />
     </div>
   );
 };

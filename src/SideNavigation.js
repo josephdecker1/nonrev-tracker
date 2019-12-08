@@ -3,8 +3,7 @@ import { Menu, Sidebar, Icon } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 import LoginModal from "./LoginModal";
 
-import { login, logout } from "./Auth";
-import firebaseApp from "../firebase";
+import { logout } from "./Auth";
 
 export const SideNavigation = props => {
   const [modalState, updateModalState] = React.useState(false);
@@ -35,56 +34,56 @@ export const SideNavigation = props => {
     <div>
       <Sidebar
         id="SideNavigation"
-        as={ Menu }
+        as={Menu}
         direction="left"
         inverted
         vertical
-        visible={ true }
+        visible={true}
         width="thin"
         color="blue"
       >
-        <Menu.Item as={ Link } to="/">
+        <Menu.Item as={Link} to="/">
           <Icon name="home" />
           Home
         </Menu.Item>
 
-        <Menu.Item as={ Link } to="/map">
+        <Menu.Item as={Link} to="/map">
           <Icon name="map" />
           Map
         </Menu.Item>
 
-        { user && (
+        {user && (
           <>
-            <Menu.Item as={ Link } to="/account">
+            <Menu.Item as={Link} to="/account">
               <Icon name="cog" />
               Account
             </Menu.Item>
-            <Menu.Item as={ Link } to="/" onClick={ () => logout() }>
+            <Menu.Item as={Link} to="/" onClick={() => logout()}>
               <Icon name="log out" />
               Log Out
             </Menu.Item>
           </>
-        ) }
+        )}
 
-        { !user && (
+        {!user && (
           <Menu.Item
             as="a"
-            onClick={ () => {
+            onClick={() => {
               console.log("I was clicked");
               updateModalState(!modalState);
-            } }
+            }}
           >
             <Icon name="angle right" />
             Login
           </Menu.Item>
-        ) }
+        )}
       </Sidebar>
-      { modalState ? (
+      {modalState ? (
         <LoginModal
-          modalState={ modalState }
-          updateModalState={ updateModalState }
+          modalState={modalState}
+          updateModalState={updateModalState}
         />
-      ) : null }
+      ) : null}
     </div>
   );
 };
