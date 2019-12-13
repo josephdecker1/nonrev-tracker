@@ -1,18 +1,14 @@
 import React, { Suspense, lazy } from "react";
 import { css } from "@emotion/core";
 
-const Map = React.lazy(() => import("./Map"));
-const Account = React.lazy(() => import("./Account"));
+const UserData = React.lazy(() => import("../apps/UserData"));
+const Home = React.lazy(() => import("../apps/Home"));
+const Map = React.lazy(() => import("../apps/Map"));
+const Account = React.lazy(() => import("../apps/Account"));
 
-const Loading = () => {
-  return (
-    <div>
-      <h1>LOADING....</h1>
-    </div>
-  );
-};
+import Loader from "../components/loader";
 
-const renderContent = (user, location) => {
+const renderContent = (user, location, userRef) => {
   switch (location) {
     case "/map":
       return (
@@ -46,19 +42,21 @@ const renderContent = (user, location) => {
         </>
       );
     case "/account":
-      return <Account user={user} />;
+      return <Account user={user} userRef={userRef} />;
+    case "/userdata":
+      return <UserData user={user} userRef={userRef} />;
     default:
-      return <div>home home home</div>;
+      return <Home user={user} userRef={userRef} />;
   }
 };
 
 const Content = props => {
-  const { user, userRef, location } = props;
+  const { user, userRef, location, userData } = props;
 
   return (
     <div>
-      <Suspense fallback={<Loading />}>
-        {renderContent(user, location)}
+      <Suspense fallback={<Loader />}>
+        {renderContent(user, location, userRef, userData)}
       </Suspense>
     </div>
   );

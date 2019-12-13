@@ -10,7 +10,7 @@ export const useAuth = auth => {
     userRef: null
   });
 
-  const setDatabase = authState => {
+  const setDatabaseRef = authState => {
     let userRef = null;
 
     if (authState) {
@@ -22,7 +22,7 @@ export const useAuth = auth => {
           //doc doesn't exist yet, so we're gonna make one for the user
           userRef.set({
             created: new Date(),
-            user: authState.displayName,
+            userName: authState.displayName,
             flight_data: []
           });
         }
@@ -36,7 +36,7 @@ export const useAuth = auth => {
       setState({
         isLoading: false,
         user: authState,
-        userRef: setDatabase(authState)
+        userRef: setDatabaseRef(authState)
       })
     );
     return unsubscribe;

@@ -3,12 +3,11 @@ import { Menu, Sidebar, Icon } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 import LoginModal from "./LoginModal";
 
-import { logout } from "./Auth";
+import { logout } from "../Auth";
 
 export const SideNavigation = props => {
   const [modalState, updateModalState] = React.useState(false);
-  const user = props.user;
-  console.log("USER => " + JSON.stringify(user));
+  const { user, activeApp } = props;
 
   // [
   //   "red",
@@ -40,23 +39,46 @@ export const SideNavigation = props => {
         vertical
         visible={true}
         width="thin"
-        color="blue"
       >
-        <Menu.Item as={Link} to="/">
+        <Menu.Item
+          as={Link}
+          to="/"
+          active={activeApp === "home"}
+          color={"green"}
+        >
           <Icon name="home" />
           Home
         </Menu.Item>
 
-        <Menu.Item as={Link} to="/map">
+        <Menu.Item
+          as={Link}
+          to="/map"
+          active={activeApp === "map"}
+          color={"green"}
+        >
           <Icon name="map" />
           Map
         </Menu.Item>
 
         {user && (
           <>
-            <Menu.Item as={Link} to="/account">
+            <Menu.Item
+              as={Link}
+              to="/account"
+              active={activeApp === "account"}
+              color={"green"}
+            >
               <Icon name="cog" />
               Account
+            </Menu.Item>
+            <Menu.Item
+              as={Link}
+              to="/userdata"
+              active={activeApp === "userdata"}
+              color={"green"}
+            >
+              <Icon name="database" />
+              User Data
             </Menu.Item>
             <Menu.Item as={Link} to="/" onClick={() => logout()}>
               <Icon name="log out" />
