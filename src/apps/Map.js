@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import GoogleMapReact from "google-map-react";
-import FlightIcon from "@material-ui/icons/Flight";
+// import FlightIcon from "@material-ui/icons/Flight";
+import { Icon, Image, Statistic, Button } from "semantic-ui-react";
+import { MapAction } from "../components/MapAction";
 
 // import data from "../airports.json";
 
@@ -30,12 +32,13 @@ const Map = props => {
       lat: 32.7766642,
       lng: -96.7969879
     },
-    zoom: 5
+    zoom: 15
   });
   const [flights, updateFlights] = useState([]);
   const [flightPaths, updateFlightPaths] = useState([]);
   const [map, updateMap] = useState(null);
   const [maps, updateMaps] = useState(null);
+  const { navWidth } = props;
 
   const handleApiLoaded = (map, maps) => {
     updateMap(map);
@@ -75,7 +78,7 @@ const Map = props => {
 
     let new_flightPaths = props.flightData.map((flight, index) => {
       setTimeout(() => {
-        console.log("Animating flight! " + flight);
+        // console.log("Animating flight! " + flight);
         animateFlight(flight);
       }, index * 500);
     });
@@ -138,15 +141,93 @@ const Map = props => {
 
   return (
     <div style={{ height: "100%", width: "100%" }}>
-      <GoogleMapReact
-        bootstrapURLKeys={{ key: "AIzaSyCWt71FcC8lNGEHuvImYyG8fWZQoasHGnA" }}
-        center={location.center}
-        zoom={location.zoom}
-        yesIWantToUseGoogleMapApiInternals
-        onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)}
+      <div
+        onClick={() => {
+          console.log("I was clicked!");
+        }}
+        css={css`
+          position: absolute;
+          top: 10px;
+          left: calc(${navWidth}px + 10px);
+          z-index: 2;
+        `}
       >
-        {flights.length > 0 ? flights.map(flight => flight) : null}
-      </GoogleMapReact>
+        <MapAction
+          app="userdata"
+          action="add_flight"
+          actionText="Flight(s)"
+          actionIcon="plus"
+          color="green"
+        />
+
+        <MapAction
+          app="userdata"
+          action="delete_flight"
+          actionText="Flight(s)"
+          actionIcon="minus"
+          color="red"
+        />
+      </div>
+      <div
+        style={{
+          height: "80%",
+          width: "100%",
+          position: "relative",
+          zIndex: "1"
+        }}
+      >
+        <GoogleMapReact
+          bootstrapURLKeys={{ key: "AIzaSyCWt71FcC8lNGEHuvImYyG8fWZQoasHGnA" }}
+          center={location.center}
+          zoom={location.zoom}
+          yesIWantToUseGoogleMapApiInternals
+          onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)}
+        >
+          {flights.length > 0 ? flights.map(flight => flight) : null}
+        </GoogleMapReact>
+      </div>
+      <div
+        style={{
+          padding: "10px",
+          height: "20%",
+          width: "100%",
+          backgroundColor: "pink"
+        }}
+      >
+        <Statistic.Group widths="four">
+          <Statistic>
+            <Statistic.Value>22</Statistic.Value>
+            <Statistic.Label>Saves</Statistic.Label>
+          </Statistic>
+
+          <Statistic>
+            <Statistic.Value text>
+              Three
+              <br />
+              Thousand
+            </Statistic.Value>
+            <Statistic.Label>Signups</Statistic.Label>
+          </Statistic>
+
+          <Statistic>
+            <Statistic.Value>
+              <Icon name="plane" />5
+            </Statistic.Value>
+            <Statistic.Label>Flights</Statistic.Label>
+          </Statistic>
+
+          <Statistic>
+            <Statistic.Value>
+              <Image
+                src="https://react.semantic-ui.com/images/avatar/small/joe.jpg"
+                className="circular inline"
+              />
+              42
+            </Statistic.Value>
+            <Statistic.Label>Team Members</Statistic.Label>
+          </Statistic>
+        </Statistic.Group>
+      </div>
     </div>
   );
 };

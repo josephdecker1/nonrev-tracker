@@ -8,7 +8,7 @@ const Account = React.lazy(() => import("../apps/Account"));
 
 import Loader from "../components/loader";
 
-const renderContent = (user, location, userRef) => {
+const renderContent = (user, location, userRef, navWidth) => {
   switch (location) {
     case "/map":
       return (
@@ -16,28 +16,17 @@ const renderContent = (user, location, userRef) => {
           <div
             css={css`
               width: 100%;
-              height: 50vh;
+              height: 100vh;
               padding: 0px;
             `}
           >
             <Map
               center={{ lat: 32.7766642, lng: -96.7969879 }}
-              zoom={4}
+              zoom={5}
               flightsUploaded={false}
               flightData={[]}
+              navWidth={navWidth}
             />
-          </div>
-
-          <div
-            css={css`
-              height: 100px;
-              width: calc(100% - 10px);
-              background-color: blue;
-              margin: 5px;
-              color: white;
-            `}
-          >
-            boo
           </div>
         </>
       );
@@ -51,12 +40,12 @@ const renderContent = (user, location, userRef) => {
 };
 
 const Content = props => {
-  const { user, userRef, location, userData } = props;
+  const { user, userRef, location, userData, navWidth } = props;
 
   return (
     <div>
       <Suspense fallback={<Loader />}>
-        {renderContent(user, location, userRef, userData)}
+        {renderContent(user, location, userRef, navWidth)}
       </Suspense>
     </div>
   );

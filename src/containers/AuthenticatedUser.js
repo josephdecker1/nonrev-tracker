@@ -36,6 +36,7 @@ export const AuthenticatedUser = props => {
         user={user}
         userRef={userRef}
         location={history.location.pathname}
+        navWidth={navWidth}
       />
     </div>
   );
