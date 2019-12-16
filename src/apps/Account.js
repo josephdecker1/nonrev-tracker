@@ -10,12 +10,11 @@ const Account = props => {
 
   const [accountData, updateAccountData] = React.useState({
     email: user.email,
-    verified: user.emailVerified,
-    photoUrl: user.photoUrl,
+    verified: user.emailVerified.toString(),
+    photoURL: user.photoURL,
+    home_base: userData.home_base,
     department: userData.department || "swa"
   });
-
-  const [originalData, updateOriginalData] = React.useState({});
 
   const updateField = e => {
     updateAccountData({
@@ -27,18 +26,12 @@ const Account = props => {
   React.useEffect(() => {
     userRef.get().then(doc => {
       if (doc.exists) {
-        console.log("USERDATA => " + JSON.stringify(doc.data()));
-        updateUserData(doc.data());
+        updateAccountData({
+          ...accountData,
+          home_base: doc.data().home_base,
+          department: doc.data().department || "swa"
+        });
       }
-    });
-  }, [user]);
-
-  React.useEffect(() => {
-    updateOriginalData({
-      email: user.email,
-      verified: user.emailVerified,
-      photoUrl: user.photoUrl,
-      department: userData.department || "swa"
     });
   }, []);
 
@@ -81,6 +74,7 @@ const Account = props => {
             {Object.keys(accountData).map(item => {
               return (
                 <div key={item}>
+                  {console.log(item, accountData[item])}
                   {item} :: {accountData[item]}
                 </div>
               );

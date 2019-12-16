@@ -3,7 +3,8 @@ import { css } from "@emotion/core";
 
 const UserData = React.lazy(() => import("../apps/UserData"));
 const Home = React.lazy(() => import("../apps/Home"));
-const Map = React.lazy(() => import("../apps/Map"));
+// const Map = React.lazy(() => import("../apps/Map"));
+const Map = React.lazy(() => import("../apps/MapWrapper"));
 const Account = React.lazy(() => import("../apps/Account"));
 
 import Loader from "../components/loader";

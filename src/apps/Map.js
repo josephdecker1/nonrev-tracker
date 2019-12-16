@@ -38,6 +38,7 @@ const Map = props => {
   const [flightPaths, updateFlightPaths] = useState([]);
   const [map, updateMap] = useState(null);
   const [maps, updateMaps] = useState(null);
+  const [flightStats, updateFlightStats] = useState({});
   const { navWidth } = props;
 
   const handleApiLoaded = (map, maps) => {
@@ -142,13 +143,10 @@ const Map = props => {
   return (
     <div style={{ height: "100%", width: "100%" }}>
       <div
-        onClick={() => {
-          console.log("I was clicked!");
-        }}
         css={css`
           position: absolute;
-          top: 10px;
-          left: calc(${navWidth}px + 10px);
+          top: 7px;
+          left: calc(${navWidth}px + 7px);
           z-index: 2;
         `}
       >
@@ -158,14 +156,6 @@ const Map = props => {
           actionText="Flight(s)"
           actionIcon="plus"
           color="green"
-        />
-
-        <MapAction
-          app="userdata"
-          action="delete_flight"
-          actionText="Flight(s)"
-          actionIcon="minus"
-          color="red"
         />
       </div>
       <div
@@ -194,7 +184,15 @@ const Map = props => {
           backgroundColor: "pink"
         }}
       >
-        <Statistic.Group widths="four">
+        <Statistic.Group widths="five">
+          <Statistic>
+            <Statistic.Value text>
+              Your <br />
+              Flight <br />
+              Stats
+            </Statistic.Value>
+          </Statistic>
+
           <Statistic>
             <Statistic.Value>22</Statistic.Value>
             <Statistic.Label>Saves</Statistic.Label>
