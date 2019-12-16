@@ -10,9 +10,9 @@ const Account = props => {
 
   const [accountData, updateAccountData] = React.useState({
     email: user.email,
-    verified: user.emailVerified.toString(),
-    photoURL: user.photoURL,
-    home_base: userData.home_base,
+    verified: user.emailVerified.toString() || false,
+    photoURL: user.photoURL || "",
+    home_base: userData.home_base || "dal",
     department: userData.department || "swa"
   });
 
@@ -44,53 +44,53 @@ const Account = props => {
   };
 
   return (
-    <Suspense fallback={<Loader />}>
+    <Suspense fallback={ <Loader /> }>
       <Container>
-        {editState && (
+        { editState && (
           <div>
             <h1>Here's the editable data</h1>
 
-            {Object.keys(accountData).map(item => {
+            { Object.keys(accountData).map(item => {
               return (
-                <div key={item}>
-                  {item} ::
+                <div key={ item }>
+                  { item } ::
                   <Editable
-                    updateValue={updateField}
-                    value={accountData[item]}
-                    name={item}
+                    updateValue={ updateField }
+                    value={ accountData[item] }
+                    name={ item }
                   />
                 </div>
               );
-            })}
+            }) }
           </div>
-        )}
+        ) }
 
-        {!editState && (
+        { !editState && (
           <div>
             <h1>
-              Hey {user.displayName.toString().split(" ")[0]}, here's your data{" "}
+              Hey{ user ?.displayName ? ` ${user.displayName.toString().split(" ")[0]}` : "" }, here's your data{ " " }
               <Icon name="id badge outline" />
             </h1>
-            {Object.keys(accountData).map(item => {
+            { Object.keys(accountData).map(item => {
               return (
-                <div key={item}>
-                  {console.log(item, accountData[item])}
-                  {item} :: {accountData[item]}
+                <div key={ item }>
+                  { console.log(item, accountData[item]) }
+                  { item } :: { accountData[item] }
                 </div>
               );
-            })}
+            }) }
           </div>
-        )}
+        ) }
 
-        {editState ? (
-          <Button color="red" onClick={handleEditClick}>
+        { editState ? (
+          <Button color="red" onClick={ handleEditClick }>
             CANCEL
           </Button>
         ) : (
-          <Button color="green" onClick={handleEditClick}>
-            EDIT
+            <Button color="green" onClick={ handleEditClick }>
+              EDIT
           </Button>
-        )}
+          ) }
       </Container>
     </Suspense>
   );
