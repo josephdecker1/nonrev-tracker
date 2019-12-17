@@ -32,7 +32,8 @@
     "react-simple-maps": "^1.0.0-beta.0",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^0.88.1",
-    "uuid": "^3.3.3"
+    "uuid": "^3.3.3",
+    "uuidv4": "^6.0.0"
   },
   "browserslist": [
     "last 2 Chrome versions",

@@ -1,15 +1,11 @@
 import React from "react";
+import { uuid } from "uuidv4";
 import { css } from "@emotion/core";
-import { Button } from "semantic-ui-react";
+import { Button, Table } from "semantic-ui-react";
 import { uploadButton, uploadFormInput, colors } from "../app_css";
 import { getDistance, convertDistance, getCenterOfBounds } from "geolib";
 
 import Paper from "@material-ui/core/Paper";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
 
 import airport_data from "../../airports.json";
 
@@ -21,10 +17,10 @@ const UserData = props => {
   const [flights_uploaded, updateFlightsUploaded] = React.useState(false);
   const [mapCenterBounds, updateMapCenterBounds] = React.useState({});
   const [totalDistanceTravelled, updateTotalDistanceTravelled] = React.useState(
-    null
+    0
   );
-  const [uniqueAirports, updateUniqueAirports] = React.useState(null);
-  const [zoom, updateZoom] = React.useState(null);
+  const [uniqueAirports, updateUniqueAirports] = React.useState([]);
+  const [zoom, updateZoom] = React.useState(4);
   const [airports, updateAirports] = React.useState(airport_data);
 
   React.useEffect(() => {
@@ -37,6 +33,25 @@ const UserData = props => {
       }
     });
   }, [user]);
+
+  React.useEffect(() => {
+    flightData.length > 0
+      ? userRef.update({ flight_data: flightData })
+      : console.log("no flight data yet!");
+  }, [flightData]);
+
+  React.useEffect(() => {
+    console.log("TOTALDISTANCETRAVELED " + totalDistanceTravelled);
+    totalDistanceTravelled > 0
+      ? userRef.update({ totalDistanceTravelled: totalDistanceTravelled })
+      : console.log("no totalDistanceTravelled data yet!");
+  }, [totalDistanceTravelled]);
+
+  React.useEffect(() => {
+    uniqueAirports.length > 0
+      ? userRef.update({ uniqueAirports: uniqueAirports })
+      : console.log("no uniqueAirports data yet!");
+  }, [uniqueAirports]);
 
   const handleChange = e => {
     console.log(e.target.files[0]);
@@ -119,7 +134,6 @@ const UserData = props => {
             width: 100%;
             overflow-x: auto;
             margin-bottom: 5px;
-            height: 500px;
             overflow-y: auto;
           `}
         >
@@ -130,44 +144,44 @@ const UserData = props => {
               minwidth: 650;
             `}
           >
-            <TableHead
+            <Table.Header
               css={css`
                 background-color: ${colors.green};
               `}
             >
-              <TableRow>
-                <TableCell>Flight PNR</TableCell>
-                <TableCell align="center">Flight Date</TableCell>
-                <TableCell align="center">Flight Number</TableCell>
-                <TableCell align="center">Origin</TableCell>
-                <TableCell align="center">Origin Location</TableCell>
-                <TableCell align="right">Destination</TableCell>
-                <TableCell align="center">Destination Location</TableCell>
-                <TableCell align="center">Distance (Miles)</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
+              <Table.Row>
+                <Table.Cell>Flight PNR</Table.Cell>
+                <Table.Cell align="center">Flight Date</Table.Cell>
+                <Table.Cell align="center">Flight Number</Table.Cell>
+                <Table.Cell align="center">Origin</Table.Cell>
+                <Table.Cell align="center">Origin Location</Table.Cell>
+                <Table.Cell align="right">Destination</Table.Cell>
+                <Table.Cell align="center">Destination Location</Table.Cell>
+                <Table.Cell align="center">Distance (Miles)</Table.Cell>
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
               {flightData.map(row => (
-                <TableRow
+                <Table.Row
                   key={`${row["PNR"]}-${Math.floor(Math.random() * 10000) + 1}`}
                 >
-                  <TableCell component="th" scope="row">
+                  <Table.Cell component="th" scope="row">
                     {row["PNR"]}
-                  </TableCell>
-                  <TableCell align="right">{row["Flight Date"]}</TableCell>
-                  <TableCell align="right">{row["Flight Number"]}</TableCell>
-                  <TableCell align="right">{row["Origin"]}</TableCell>
-                  <TableCell center="right">
+                  </Table.Cell>
+                  <Table.Cell align="right">{row["Flight Date"]}</Table.Cell>
+                  <Table.Cell align="right">{row["Flight Number"]}</Table.Cell>
+                  <Table.Cell align="right">{row["Origin"]}</Table.Cell>
+                  <Table.Cell center="right">
                     {JSON.stringify(row["originLatLng"])}
-                  </TableCell>
-                  <TableCell align="center">{row["Destination"]}</TableCell>
-                  <TableCell center="right">
+                  </Table.Cell>
+                  <Table.Cell align="center">{row["Destination"]}</Table.Cell>
+                  <Table.Cell center="right">
                     {JSON.stringify(row["destinationLatLng"])}
-                  </TableCell>
-                  <TableCell align="right">{row["distance"]}</TableCell>
-                </TableRow>
+                  </Table.Cell>
+                  <Table.Cell align="right">{row["distance"]}</Table.Cell>
+                </Table.Row>
               ))}
-            </TableBody>
+            </Table.Body>
           </Table>
         </Paper>
       </div>
@@ -176,20 +190,22 @@ const UserData = props => {
 
   return (
     <>
-      <h1>hello! UserData page</h1>
+      <h1>Hello, {userData?.user?.split(" ")[0]}, Here's your flight data.</h1>
       {Object.entries(userData).map(key => {
         console.log(key);
+        if (key[0] == "flight_data") {
+          return (
+            <div key={`--${uuid()}`}>
+              {key[0].toString()} :: {"flight data; lots of it"}
+            </div>
+          );
+        }
         return (
-          <div key={key}>
+          <div key={`--${uuid()}`}>
             {key[0].toString()} :: {key[1] ? key[1].toString() : "--"}
           </div>
         );
       })}
-
-      {userData &&
-        flight_Data.map(item => {
-          return <div key={item}>{item}</div>;
-        })}
 
       <div
         css={css`
@@ -199,6 +215,7 @@ const UserData = props => {
       >
         <form onSubmit={handleSubmit} id="flightForm">
           <Button
+            color="green"
             htmlFor="file"
             id="fileUpload"
             css={css`
