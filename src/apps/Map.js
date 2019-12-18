@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import GoogleMapReact from "google-map-react";
+import { uuid } from "uuidv4";
+import coverter from "number-to-words";
 // import FlightIcon from "@material-ui/icons/Flight";
 import { Icon, Image, Statistic, Button } from "semantic-ui-react";
 import { MapAction } from "../components/MapAction";
@@ -39,7 +41,12 @@ const Map = props => {
   const [map, updateMap] = useState(null);
   const [maps, updateMaps] = useState(null);
   const [flightStats, updateFlightStats] = useState({});
-  const { navWidth } = props;
+  const {
+    navWidth,
+    uniqueAirports,
+    totalDistanceTravelled,
+    flightCount
+  } = props;
 
   const handleApiLoaded = (map, maps) => {
     updateMap(map);
@@ -59,12 +66,12 @@ const Map = props => {
   const createMapIcons = () => {
     let components = props.flightData.flatMap(flight => [
       <MapIcon
-        key={`${flight.PNR}-${Math.floor(Math.random() * 10000) + 1}`}
+        key={`${flight.PNR}-${uuid()}`}
         lat={flight.destinationLatLng.lat}
         lng={flight.destinationLatLng.lng}
       />,
       <MapIcon
-        key={`${flight.PNR}-${Math.floor(Math.random() * 10000) + 1}`}
+        key={`${flight.PNR}-${uuid()}`}
         lat={flight.originLatLng.lat}
         lng={flight.originLatLng.lng}
       />
@@ -181,37 +188,30 @@ const Map = props => {
           padding: "10px",
           height: "20%",
           width: "100%",
-          backgroundColor: "pink"
+          backgroundColor: colors.yellow
         }}
       >
-        <Statistic.Group widths="five">
+        <Statistic.Group widths="four">
           <Statistic>
-            <Statistic.Value text>
-              Your <br />
-              Flight <br />
-              Stats
+            <Statistic.Value>
+              {coverter.toWords(uniqueAirports.length)}
             </Statistic.Value>
-          </Statistic>
-
-          <Statistic>
-            <Statistic.Value>22</Statistic.Value>
-            <Statistic.Label>Saves</Statistic.Label>
-          </Statistic>
-
-          <Statistic>
-            <Statistic.Value text>
-              Three
-              <br />
-              Thousand
-            </Statistic.Value>
-            <Statistic.Label>Signups</Statistic.Label>
+            <Statistic.Label>Unique Airports</Statistic.Label>
           </Statistic>
 
           <Statistic>
             <Statistic.Value>
-              <Icon name="plane" />5
+              {flightCount} <Icon name="plane" />
             </Statistic.Value>
-            <Statistic.Label>Flights</Statistic.Label>
+            <Statistic.Label>Total Flights</Statistic.Label>
+          </Statistic>
+
+          <Statistic>
+            <Statistic.Value>
+              {totalDistanceTravelled.toLocaleString()}
+              <Icon name="flag checkered" />
+            </Statistic.Value>
+            <Statistic.Label>Miles Travelled</Statistic.Label>
           </Statistic>
 
           <Statistic>
@@ -220,9 +220,9 @@ const Map = props => {
                 src="https://react.semantic-ui.com/images/avatar/small/joe.jpg"
                 className="circular inline"
               />
-              42
+              1
             </Statistic.Value>
-            <Statistic.Label>Team Members</Statistic.Label>
+            <Statistic.Label>Random Statistic</Statistic.Label>
           </Statistic>
         </Statistic.Group>
       </div>

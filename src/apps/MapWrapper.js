@@ -21,45 +21,51 @@ import { colors } from "../app_css";
 }
 */
 
-let user = "Joseph";
+const MapWrapper = props => {
+  const { userRef } = props;
+  const [mapCenterBounds, updateMapCenterBounds] = React.useState({
+    lat: 32.7766642,
+    lng: -96.7969879
+  });
+  const [zoom, updateZoom] = React.useState(5);
+  const [flightData, updateFlightData] = React.useState([]);
+  const [totalDistanceTravelled, updateTotalDistanceTravelled] = React.useState(
+    0
+  );
+  const [uniqueAirports, updateUniqueAirports] = React.useState([]);
+  const navWidth = props.navWidth;
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      flights_uploaded: false,
-      mapCenterBounds: { lat: 32.7766642, lng: -96.7969879 },
-      zoom: 4,
-      flightData: [],
-      navWidth: props.navWidth
-    };
-  }
+  React.useEffect(() => {
+    userRef.get().then(doc => {
+      if (doc.exists) {
+        console.log("USERDATA => " + JSON.stringify(doc.data().flight_data));
+        updateFlightData(doc.data().flight_data);
+        updateTotalDistanceTravelled(doc.data().totalDistanceTravelled);
+        updateUniqueAirports(doc.data().uniqueAirports);
+        // return doc.data();
+      }
+    });
+  }, []);
 
-  noop = () => null;
+  return (
+    <div
+      css={css`
+        width: 100%;
+        height: 100vh;
+        padding: 0px;
+      `}
+    >
+      <Map
+        center={mapCenterBounds}
+        zoom={zoom}
+        flightData={flightData || []}
+        navWidth={navWidth}
+        flightCount={flightData.length || 0}
+        uniqueAirports={uniqueAirports}
+        totalDistanceTravelled={totalDistanceTravelled}
+      />
+    </div>
+  );
+};
 
-  componentDidMount() {
-    // console.log("I was mounted!");
-  }
-
-  render() {
-    return (
-      <div
-        css={css`
-          width: 100%;
-          height: 100vh;
-          padding: 0px;
-        `}
-      >
-        <Map
-          center={this.state.mapCenterBounds}
-          zoom={this.state.zoom}
-          flightsUploaded={this.state.flights_uploaded}
-          flightData={this.state.flightData}
-          navWidth={this.state.navWidth}
-        />
-      </div>
-    );
-  }
-}
-
-export default App;
+export default MapWrapper;

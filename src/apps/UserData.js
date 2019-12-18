@@ -1,11 +1,9 @@
 import React from "react";
 import { uuid } from "uuidv4";
 import { css } from "@emotion/core";
-import { Button, Table } from "semantic-ui-react";
+import { Button, Table, Container } from "semantic-ui-react";
 import { uploadButton, uploadFormInput, colors } from "../app_css";
 import { getDistance, convertDistance, getCenterOfBounds } from "geolib";
-
-import Paper from "@material-ui/core/Paper";
 
 import airport_data from "../../airports.json";
 
@@ -33,25 +31,6 @@ const UserData = props => {
       }
     });
   }, [user]);
-
-  React.useEffect(() => {
-    flightData.length > 0
-      ? userRef.update({ flight_data: flightData })
-      : console.log("no flight data yet!");
-  }, [flightData]);
-
-  React.useEffect(() => {
-    console.log("TOTALDISTANCETRAVELED " + totalDistanceTravelled);
-    totalDistanceTravelled > 0
-      ? userRef.update({ totalDistanceTravelled: totalDistanceTravelled })
-      : console.log("no totalDistanceTravelled data yet!");
-  }, [totalDistanceTravelled]);
-
-  React.useEffect(() => {
-    uniqueAirports.length > 0
-      ? userRef.update({ uniqueAirports: uniqueAirports })
-      : console.log("no uniqueAirports data yet!");
-  }, [uniqueAirports]);
 
   const handleChange = e => {
     console.log(e.target.files[0]);
@@ -118,73 +97,61 @@ const UserData = props => {
   const handleSubmit = event => {
     event.preventDefault();
 
+    userRef.update({ flight_data: flightData });
+    userRef.update({ totalDistanceTravelled: totalDistanceTravelled });
+    userRef.update({ uniqueAirports: uniqueAirports });
+
     console.log(flightData);
   };
 
-  const renderData = () => {
+  const renderData = data => {
     return (
-      <div
+      <Table
+        aria-label="flight table"
+        size="small"
         css={css`
           width: 100%;
         `}
       >
-        <Paper
+        <Table.Header
           css={css`
-            margin-top: 10px;
-            width: 100%;
-            overflow-x: auto;
-            margin-bottom: 5px;
-            overflow-y: auto;
+            background-color: ${colors.green};
           `}
         >
-          <Table
-            aria-label="flight table"
-            size="small"
-            css={css`
-              minwidth: 650;
-            `}
-          >
-            <Table.Header
-              css={css`
-                background-color: ${colors.green};
-              `}
+          <Table.Row>
+            <Table.Cell>Flight PNR</Table.Cell>
+            <Table.Cell align="center">Flight Date</Table.Cell>
+            <Table.Cell align="center">Flight Number</Table.Cell>
+            <Table.Cell align="center">Origin</Table.Cell>
+            <Table.Cell align="center">Origin Location</Table.Cell>
+            <Table.Cell align="right">Destination</Table.Cell>
+            <Table.Cell align="center">Destination Location</Table.Cell>
+            <Table.Cell align="center">Distance (Miles)</Table.Cell>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          {data.map(row => (
+            <Table.Row
+              key={`${row["PNR"]}-${Math.floor(Math.random() * 10000) + 1}`}
             >
-              <Table.Row>
-                <Table.Cell>Flight PNR</Table.Cell>
-                <Table.Cell align="center">Flight Date</Table.Cell>
-                <Table.Cell align="center">Flight Number</Table.Cell>
-                <Table.Cell align="center">Origin</Table.Cell>
-                <Table.Cell align="center">Origin Location</Table.Cell>
-                <Table.Cell align="right">Destination</Table.Cell>
-                <Table.Cell align="center">Destination Location</Table.Cell>
-                <Table.Cell align="center">Distance (Miles)</Table.Cell>
-              </Table.Row>
-            </Table.Header>
-            <Table.Body>
-              {flightData.map(row => (
-                <Table.Row
-                  key={`${row["PNR"]}-${Math.floor(Math.random() * 10000) + 1}`}
-                >
-                  <Table.Cell component="th" scope="row">
-                    {row["PNR"]}
-                  </Table.Cell>
-                  <Table.Cell align="right">{row["Flight Date"]}</Table.Cell>
-                  <Table.Cell align="right">{row["Flight Number"]}</Table.Cell>
-                  <Table.Cell align="right">{row["Origin"]}</Table.Cell>
-                  <Table.Cell center="right">
-                    {JSON.stringify(row["originLatLng"])}
-                  </Table.Cell>
-                  <Table.Cell align="center">{row["Destination"]}</Table.Cell>
-                  <Table.Cell center="right">
-                    {JSON.stringify(row["destinationLatLng"])}
-                  </Table.Cell>
-                  <Table.Cell align="right">{row["distance"]}</Table.Cell>
-                </Table.Row>
-              ))}
-            </Table.Body>
-          </Table>
-        </Paper>
-      </div>
+              <Table.Cell component="th" scope="row">
+                {row["PNR"]}
+              </Table.Cell>
+              <Table.Cell align="right">{row["Flight Date"]}</Table.Cell>
+              <Table.Cell align="right">{row["Flight Number"]}</Table.Cell>
+              <Table.Cell align="right">{row["Origin"]}</Table.Cell>
+              <Table.Cell center="right">
+                {JSON.stringify(row["originLatLng"])}
+              </Table.Cell>
+              <Table.Cell align="center">{row["Destination"]}</Table.Cell>
+              <Table.Cell center="right">
+                {JSON.stringify(row["destinationLatLng"])}
+              </Table.Cell>
+              <Table.Cell align="right">{row["distance"]}</Table.Cell>
+            </Table.Row>
+          ))}
+        </Table.Body>
+      </Table>
     );
   };
 
@@ -222,7 +189,7 @@ const UserData = props => {
               ${uploadButton}
             `}
           >
-            <label htmlFor="file">Upload Flights</label>
+            <label htmlFor="file">Upload New Flights</label>
           </Button>
           <input
             type="file"
@@ -232,20 +199,24 @@ const UserData = props => {
             `}
             id="file"
           />
-          <Button
-            type="submit"
-            form="flightForm"
-            value="Submit"
-            css={css`
-              ${uploadButton} margin-left: 5px;
-              padding: 6px 2px 6px 2px;
-            `}
-          >
-            Submit Flights
-          </Button>
+          {flights_uploaded && (
+            <Button
+              type="submit"
+              form="flightForm"
+              value="Submit"
+              css={css`
+                ${uploadButton} margin-left: 5px;
+                padding: 6px 2px 6px 2px;
+              `}
+            >
+              Submit Flights
+            </Button>
+          )}
         </form>
       </div>
-      <div>{flights_uploaded && renderData()}</div>
+      {flights_uploaded
+        ? flights_uploaded && renderData(flightData)
+        : flight_Data.length > 0 && renderData(flight_Data)}
     </>
   );
 };

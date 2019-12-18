@@ -3,7 +3,6 @@ import { css } from "@emotion/core";
 
 const UserData = React.lazy(() => import("../apps/UserData"));
 const Home = React.lazy(() => import("../apps/Home"));
-// const Map = React.lazy(() => import("../apps/Map"));
 const Map = React.lazy(() => import("../apps/MapWrapper"));
 const Account = React.lazy(() => import("../apps/Account"));
 
@@ -21,13 +20,7 @@ const renderContent = (user, location, userRef, navWidth) => {
               padding: 0px;
             `}
           >
-            <Map
-              center={{ lat: 32.7766642, lng: -96.7969879 }}
-              zoom={5}
-              flightsUploaded={false}
-              flightData={[]}
-              navWidth={navWidth}
-            />
+            <Map userRef={userRef} navWidth={navWidth} />
           </div>
         </>
       );
@@ -41,7 +34,7 @@ const renderContent = (user, location, userRef, navWidth) => {
 };
 
 const Content = props => {
-  const { user, userRef, location, userData, navWidth } = props;
+  const { user, userRef, location, navWidth } = props;
 
   return (
     <div>
