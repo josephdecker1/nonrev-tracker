@@ -50,6 +50,8 @@ const UserData = props => {
         let uniqueAirports = [];
 
         updatedData = updatedData.map(flight => {
+          console.log(flight);
+
           originLatLng = {
             lat: airports[flight["Origin"]].LAT,
             lng: airports[flight["Origin"]].LNG
