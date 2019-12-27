@@ -6,14 +6,14 @@ jobs:
     steps:
       - checkout # check out the code in the project directory
       - run:
-        name: install node modules
-        command: npm install
+          name: install node modules
+          command: npm install
       - run:
-        name: install firebase tools
-        command: npm install --save-dev firebase-tools
+          name: install firebase tools
+          command: npm install --save-dev firebase-tools
       - run:
-        name: build react app(s)
-        command: npm run build
+          name: build react app(s)
+          command: npm run build
       - run:
-        name: Deploy Master to Firebase
-        command: ./node_modules/.bin/firebase deploy --token=$FIREBASE_CI_TOKEN
+          name: Deploy Master to Firebase
+          command: ./node_modules/.bin/firebase deploy --token=$FIREBASE_CI_TOKEN
