@@ -85,7 +85,7 @@ const Account = props => {
           </div>
         )}
 
-        {editState ? (
+        {/* {editState ? (
           <Button color="red" onClick={handleEditClick}>
             CANCEL
           </Button>
@@ -93,7 +93,7 @@ const Account = props => {
           <Button color="green" onClick={handleEditClick}>
             EDIT
           </Button>
-        )}
+        )} */}
       </Container>
     </Suspense>
   );
