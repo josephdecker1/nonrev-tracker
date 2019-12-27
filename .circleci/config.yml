@@ -3,7 +3,6 @@ jobs:
   build:
     docker:
       - image: node:10 # Where the build happens
-    working_directory: ./
     steps:
       - checkout # check out the code in the project directory
       - run:
@@ -28,7 +27,6 @@ jobs:
   deploy:
     docker:
       - image: node:10 # Where the deploy happens
-    working_directory: ./
     steps:
       - run:
           name: install firebase tools
