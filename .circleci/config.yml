@@ -20,7 +20,7 @@ jobs:
       - run:
           name: store build artifacts
           command: |
-            zip deploy.zip /dist
+            zip -r deploy.zip /dist
       - store_artifacts:
           path: deploy.zip
   deploy:
