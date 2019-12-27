@@ -12,6 +12,9 @@ jobs:
           name: install firebase tools
           command: npm install --save-dev firebase-tools
       - run:
+          name: ensure functions functional!
+          command: cd functions && npm install
+      - run:
           name: build react app(s)
           command: npm run build
       - run:
