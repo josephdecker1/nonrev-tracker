@@ -19,7 +19,7 @@ jobs:
           command: npm run build
   deploy:
     docker:
-      -image: node:10
+      - image: node:10
     steps:
       - run:
           name: Deploy Master to Firebase
