@@ -3,6 +3,7 @@ jobs:
   build:
     docker:
       - image: node:10 # Where the build happens
+    working_directory: ./
     steps:
       - checkout # check out the code in the project directory
       - run:
@@ -17,10 +18,23 @@ jobs:
       - run:
           name: build react app(s)
           command: npm run build
+      - run:
+          name: store build artifacts
+          command: |
+            mkdir /deploy;
+            cp dist/* /deploy
+      - store_artifacts:
+          path: /deploy
   deploy:
+    docker:
+      - image: node:10 # Where the deploy happens
+    working_directory: ./
     steps:
       - run:
-          name: Deploy Master to Firebase
+          name: install firebase tools
+          command: npm install --save-dev firebase-tools
+      - run:
+          name: deploy Master
           command: ./node_modules/.bin/firebase deploy --token=$FIREBASE_CI_TOKEN
 
 workflows:
