@@ -20,6 +20,7 @@ jobs:
       - run:
           name: store build artifacts
           command: |
+            apt-get update && apt-get install zip
             zip -r deploy.zip /dist
       - store_artifacts:
           path: deploy.zip
