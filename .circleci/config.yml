@@ -2,7 +2,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: node:10-buster # Where the build happens
+      - image: node:10 # Where the build happens
     steps:
       - checkout # check out the code in the project directory
       - run:
