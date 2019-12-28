@@ -3,6 +3,7 @@ jobs:
   build:
     docker:
       - image: node:10 # Where the build happens
+    working_directory: ~/app
     steps:
       - checkout # check out the code in the project directory
       - run:
@@ -17,23 +18,26 @@ jobs:
       - run:
           name: build react app(s)
           command: npm run build
-      - run:
-          name: store build artifacts
-          command: |
-            apt-get update && apt-get install zip
-            zip -r deploy.zip ./dist
-      - store_artifacts:
-          path: deploy.zip
+      - persist_to_workspace:
+          root: /root/project
+          paths: app/dist/
+
   deploy:
     docker:
       - image: node:10 # Where the deploy happens
+    working_directory: ~/app
     steps:
+      - attach_workspace:
+          at: /root/project
       - run:
-          name: install firebase tools
-          command: npm install --save-dev firebase-tools
-      - run:
-          name: deploy Master
-          command: ./node_modules/.bin/firebase deploy --token=$FIREBASE_CI_TOKEN
+          name: testing stoof
+          command: ls -altr
+      # - run:
+      #     name: install firebase tools
+      #     command: npm install --save-dev firebase-tools
+      # - run:
+      #     name: deploy Master
+      #     command: ./node_modules/.bin/firebase deploy --token=$FIREBASE_CI_TOKEN
 
 workflows:
   version: 2
