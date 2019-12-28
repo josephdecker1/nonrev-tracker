@@ -23,6 +23,7 @@ jobs:
           paths:
             - dist/*
             - firebase.json
+            - .firebaserc
 
   deploy:
     docker:
