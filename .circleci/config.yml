@@ -19,8 +19,9 @@ jobs:
           name: build react app(s)
           command: npm run build
       - persist_to_workspace:
-          root: /root/app
-          paths: app/dist/
+          root: ~/app
+          paths:
+            - dist/*
 
   deploy:
     docker:
@@ -28,7 +29,7 @@ jobs:
     working_directory: ~/app
     steps:
       - attach_workspace:
-          at: /root/app
+          at: ~/app
       - run:
           name: testing stoof
           command: ls -altr
