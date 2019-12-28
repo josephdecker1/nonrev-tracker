@@ -31,14 +31,11 @@ jobs:
       - attach_workspace:
           at: ~/app
       - run:
-          name: testing stoof
-          command: ls -altr
-      # - run:
-      #     name: install firebase tools
-      #     command: npm install --save-dev firebase-tools
-      # - run:
-      #     name: deploy Master
-      #     command: ./node_modules/.bin/firebase deploy --token=$FIREBASE_CI_TOKEN
+          name: install firebase tools
+          command: npm install --save-dev firebase-tools
+      - run:
+          name: deploy Master
+          command: ./node_modules/.bin/firebase deploy --token=$FIREBASE_CI_TOKEN
 
 workflows:
   version: 2
@@ -48,6 +45,6 @@ workflows:
       - deploy:
           requires:
             - build
-          # filters:
-          #   branches:
-          #     only: master
+          filters:
+            branches:
+              only: master
