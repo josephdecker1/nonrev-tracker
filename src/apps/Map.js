@@ -174,7 +174,7 @@ const Map = props => {
         }}
       >
         <GoogleMapReact
-          bootstrapURLKeys={{ key: "AIzaSyCWt71FcC8lNGEHuvImYyG8fWZQoasHGnA" }}
+          bootstrapURLKeys={{ key: "AIzaSyBbPtzvE19paEy_skkz8ter4sdIP2ZRWQI" }}
           center={location.center}
           zoom={location.zoom}
           yesIWantToUseGoogleMapApiInternals
