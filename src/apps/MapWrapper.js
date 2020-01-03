@@ -4,23 +4,6 @@ import { css } from "@emotion/core";
 
 import { colors } from "../app_css";
 
-/* example data 
-{
-  "Name": "Goroka Airport",
-  "City": "Goroka",
-  "Country": "Papua New Guinea",
-  "IATA": "GKA",
-  "ICAO": "AYGA",
-  "LAT": -6.081689835,
-  "LNG": 145.3919983,
-  "Altitude": 5282,
-  "TimeZone": "10",
-  "DST": "U",
-  "Tz database time zone": "Pacific/Port_Moresby",
-  "Type": "airport"
-}
-*/
-
 const MapWrapper = props => {
   const { userRef } = props;
   const [mapCenterBounds, updateMapCenterBounds] = React.useState({
@@ -38,7 +21,7 @@ const MapWrapper = props => {
   React.useEffect(() => {
     userRef.get().then(doc => {
       if (doc.exists) {
-        console.log("USERDATA => " + JSON.stringify(doc.data().flight_data));
+        // console.log("USERDATA => " + JSON.stringify(doc.data().flight_data));
         updateFlightData(doc.data().flight_data);
         updateTotalDistanceTravelled(doc.data().totalDistanceTravelled);
         updateUniqueAirports(doc.data().uniqueAirports);
