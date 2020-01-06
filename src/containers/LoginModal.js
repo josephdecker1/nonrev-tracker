@@ -6,11 +6,9 @@ import {
   Grid,
   Form,
   Message,
-  Divider
 } from "semantic-ui-react";
 import { css } from "@emotion/core";
-import firebaseApp, { providers } from "../../firebase";
-import { googleLogin, twitterLogin, facebookLogin } from "../Auth";
+import firebaseApp from "../../firebase";
 
 const LoginModal = props => {
   const [username, updateUserName] = React.useState("");
