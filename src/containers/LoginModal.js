@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import {
   Header,
   Modal,
@@ -149,18 +150,13 @@ const LoginModal = props => {
                     size="large"
                     type="submit"
                     name="submit"
-                  // onClick={ (e) => {
-                  //   console.log("Logging user in!");
-                  //   formLoginSubmit(e)
-
-                  // } }
                   >
                     Login
                   </Button>
                 </Form>
 
                 <Message>
-                  New to us? <a href="#">Sign Up</a>
+                  New to us? <Link to="/#sign-up" onClick={ () => props.updateModalState(false) }>Sign Up</Link>
                 </Message>
               </Grid.Column>
             </Grid.Row>
