@@ -45,7 +45,6 @@ const Map = props => {
     navWidth,
     uniqueAirports,
     totalDistanceTravelled,
-    flightCount
   } = props;
 
   const handleApiLoaded = (map, maps) => {
@@ -69,6 +68,11 @@ const Map = props => {
     updateFlights([]);
     updateFlights(createMapIcons());
     setMapLines()
+
+    return () => {
+      updateFlights([])
+      updateFlightPaths([])
+    }
 
   }, [mapsLoaded]);
 

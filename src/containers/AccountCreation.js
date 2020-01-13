@@ -8,10 +8,14 @@ import {
   Form,
   Message,
   Container,
-  Icon
+  Icon,
+  Loader
 } from "semantic-ui-react";
 import { css } from "@emotion/core";
-import axios from 'axios'
+import axios from 'axios';
+
+import { setLatLgnAirportsForFlights, renderFlightData } from '../utils/flight_data'
+
 import firebaseApp from "../../firebase";
 
 
@@ -131,6 +135,7 @@ const step3 = (props) => {
   const { swausername, updateSWAUserName, swapassword, updateSWAPassword, swaFlightData, updateSwaFlightData, loading, updateLoading } = { ...props }
 
   const fetchFlightData = () => {
+    updateLoading(true);
     console.log("fetching data - ", loading);
     axios({
       method: 'post',
@@ -140,7 +145,8 @@ const step3 = (props) => {
         password: swapassword
       }
     }).then((response) => {
-      updateSwaFlightData(response.data);
+      const { updatedData } = setLatLgnAirportsForFlights(response.data)
+      updateSwaFlightData(updatedData);
       updateLoading(false);
       console.log(response);
     });
@@ -185,9 +191,9 @@ const step3 = (props) => {
         </Button>
     </Form>
     <div css={ css`margin-top:50px; margin-bottom: 20px;` }>
-      <p>I've got content!</p>
       <div>
-        { JSON.stringify(swaFlightData) }
+        { swaFlightData ? renderFlightData(swaFlightData) :
+          loading ? <Loader active inline /> : <p>no data yet</p> }
       </div>
     </div>
   </div >
@@ -221,7 +227,7 @@ const AccountCreation = () => {
 
   const [swausername, updateSWAUserName] = React.useState("");
   const [swapassword, updateSWAPassword] = React.useState("");
-  const [swaFlightData, updateSwaFlightData] = React.useState("");
+  const [swaFlightData, updateSwaFlightData] = React.useState(null);
   const [loading, updateLoading] = React.useState(false);
 
   const step1props = {
