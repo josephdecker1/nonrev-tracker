@@ -14,6 +14,7 @@ import {
 import { css } from "@emotion/core";
 import axios from 'axios';
 
+import { createEmailPasswordUser } from '../Auth'
 import { setLatLgnAirportsForFlights, renderFlightData } from '../utils/flight_data'
 
 import firebaseApp from "../../firebase";
@@ -236,7 +237,7 @@ const step5 = () => {
 
 
 const AccountCreation = () => {
-  const [currentStep, UpdateCurrentStep] = React.useState(3);
+  const [currentStep, UpdateCurrentStep] = React.useState(1);
 
   const [firstName, updateFirstName] = React.useState("");
   const [lastName, updateLastName] = React.useState("");
@@ -282,14 +283,12 @@ const AccountCreation = () => {
         return step3(step3props)
       case 4:
         return step4(step4props)
-      case 5:
-        return step5()
     }
   }
 
   return <div css={ css`height: 100%` }>
 
-    <Progress value={ currentStep } total="5" size="medium" color="green" active={ true } />
+    <Progress value={ currentStep } total="4" size="medium" color="green" active={ true } />
 
     <Container>
       <div css={ css`display: flex; flex-direction: row; justify-content: flex-end; width: auto;` }>
@@ -302,15 +301,28 @@ const AccountCreation = () => {
         >
           Back
         </Button>
-        <Button
-          color="green"
-          inverted
-          size="large"
-          name="submit"
-          onClick={ () => currentStep == 5 ? null : UpdateCurrentStep(currentStep + 1) }
-        >
-          Next
-        </Button>
+        { currentStep < 4 &&
+          <Button
+            color="green"
+            inverted
+            size="large"
+            name="submit"
+            onClick={ () => currentStep == 4 ? null : UpdateCurrentStep(currentStep + 1) }
+          >
+            Next
+        </Button> }
+
+        { currentStep === 4 &&
+          <Button
+            color="green"
+            inverted
+            size="large"
+            name="submit"
+            onClick={ () => createEmailPasswordUser(username, password) }
+          >
+            Create Account
+        </Button> }
+
       </div>
 
       { renderStep(currentStep) }
