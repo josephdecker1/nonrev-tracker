@@ -17,6 +17,7 @@ import axios from 'axios';
 import { setLatLgnAirportsForFlights, renderFlightData } from '../utils/flight_data'
 
 import firebaseApp from "../../firebase";
+import { gridStyles } from "../app_css";
 
 
 
@@ -199,8 +200,29 @@ const step3 = (props) => {
   </div >
 }
 
-const step4 = () => {
-  return <div>Step4</div>
+const step4 = (props) => {
+
+  const { firstName, lastName, department, jobTitle, username, swaFlightData } = props
+  return <div>
+    <Header>Review and submit!</Header>
+    <Grid columns={ 2 }>
+      <Grid.Row>
+        <Grid.Column>First Name : { firstName ? firstName : "" }</Grid.Column>
+        <Grid.Column>Last Name : { lastName ? lastName : "" }</Grid.Column>
+      </Grid.Row>
+      <Grid.Row>
+        <Grid.Column>Department: { department ? department : "" }</Grid.Column>
+        <Grid.Column>Job Title: { jobTitle ? jobTitle : "" }</Grid.Column>
+      </Grid.Row>
+      <Grid.Row>
+        <Grid.Column>Username: { username ? username : "" }</Grid.Column>
+        <Grid.Column></Grid.Column>
+      </Grid.Row>
+      <Grid.Row>
+        { swaFlightData ? renderFlightData(swaFlightData) : <p>No Flight Data</p> }
+      </Grid.Row>
+    </Grid>
+  </div>
 }
 
 const step5 = () => {
@@ -242,6 +264,10 @@ const AccountCreation = () => {
     swausername, updateSWAUserName, swapassword, updateSWAPassword, swaFlightData, updateSwaFlightData, loading, updateLoading
   }
 
+  const step4props = {
+    firstName, lastName, department, jobTitle, username, swaFlightData
+  }
+
   // const checkPassword = () => {
 
   // }
@@ -255,7 +281,7 @@ const AccountCreation = () => {
       case 3:
         return step3(step3props)
       case 4:
-        return step4()
+        return step4(step4props)
       case 5:
         return step5()
     }
