@@ -13,19 +13,31 @@ import {
 } from "semantic-ui-react";
 import { css } from "@emotion/core";
 import axios from 'axios';
+import isEmail from 'validator/es/lib/isEmail';
+import isEqual from 'validator/es/lib/equals'
 
 import { createEmailPasswordUser } from '../Auth'
 import { setLatLgnAirportsForFlights, renderFlightData } from '../utils/flight_data'
 
 import firebaseApp from "../../firebase";
-import { gridStyles } from "../app_css";
 
 
 
 const step1 = (props) => {
 
-  const { firstName, updateFirstName, lastName, updateLastName, department, updateDepartment, jobTitle, updateJobTitle } = { ...props }
+  const { firstName, updateFirstName, lastName, updateLastName, department, updateDepartment, jobTitle, updateJobTitle, UpdateCurrentStep, currentStep } = { ...props }
   return <div>
+    <div css={ css`display: flex; flex-direction: row; justify-content: flex-end; width: auto;` }>
+      <Button
+        color="green"
+        inverted
+        size="large"
+        name="submit"
+        onClick={ () => UpdateCurrentStep(currentStep + 1) }
+      >
+        Next
+      </Button>
+    </div>
     <Header><Icon name="info" />Let's get your basic information</Header>
     <div css={ css`display: flex; justify-content: center;` }>
       <Grid css={ css`width: 50%` }>
@@ -92,35 +104,56 @@ const step1 = (props) => {
         </Grid.Row>
       </Grid>
     </div>
-
-
   </div>
 }
 
 const step2 = (props) => {
 
-  const { username, updateUserName, password, updatePassword, repeatPassword, updateRepeatPassword } = { ...props }
+  const { email, updateEmail, validEmail, updateValidEmail, password, updatePassword, repeatPassword, updateRepeatPassword, UpdateCurrentStep, currentStep } = { ...props }
+
   return <div>
-    <Header>Now let's get your username set up</Header>
+    <div css={ css`display: flex; flex-direction: row; justify-content: flex-end; width: auto;` }>
+      <Button
+        color="red"
+        inverted
+        size="large"
+        name="submit"
+        onClick={ () => UpdateCurrentStep(currentStep - 1) }
+      >
+        Back
+      </Button>
+      <Button
+        color="green"
+        inverted
+        size="large"
+        name="submit"
+        onClick={ () => UpdateCurrentStep(currentStep + 1) }
+      >
+        Next
+      </Button>
+    </div>
+    <Header>Now let's get your email (which acts as your username) set up</Header>
     <Form
       type=""
-      size="small"
+      size="big"
     >
       <Form.Field required>
-        <label>First name</label>
+        <label>Email</label>
         <Form.Input
           fluid
           iconPosition="left"
-          placeholder="Username"
-          value={ username }
+          placeholder="Email"
+          value={ email }
           type="text"
+          onBlur={ () => updateValidEmail(isEmail(email)) }
+          error={ validEmail ? null : { content: 'Please enter a valid email', pointing: 'above' } }
           onChange={ e => {
-            updateUserName(e.target.value);
+            updateEmail(e.target.value);
           } }
         />
       </Form.Field>
       <Form.Field required>
-        <label>First name</label>
+        <label>Password</label>
         <Form.Input
           fluid
           iconPosition="left"
@@ -133,7 +166,7 @@ const step2 = (props) => {
         />
       </Form.Field>
       <Form.Field required>
-        <label>First name</label>
+        <label>Repeat Password</label>
         <Form.Input
           fluid
           iconPosition="left"
@@ -150,7 +183,7 @@ const step2 = (props) => {
 }
 
 const step3 = (props) => {
-  const { swausername, updateSWAUserName, swapassword, updateSWAPassword, swaFlightData, updateSwaFlightData, loading, updateLoading } = { ...props }
+  const { swausername, updateSWAUserName, swapassword, updateSWAPassword, swaFlightData, updateSwaFlightData, loading, updateLoading, UpdateCurrentStep, currentStep } = { ...props }
 
   const fetchFlightData = () => {
     updateLoading(true);
@@ -171,11 +204,31 @@ const step3 = (props) => {
   }
 
   return <div>
+    <div css={ css`display: flex; flex-direction: row; justify-content: flex-end; width: auto;` }>
+      <Button
+        color="red"
+        inverted
+        size="large"
+        name="submit"
+        onClick={ () => UpdateCurrentStep(currentStep - 1) }
+      >
+        Back
+      </Button>
+      <Button
+        color="green"
+        inverted
+        size="large"
+        name="submit"
+        onClick={ () => UpdateCurrentStep(currentStep + 1) }
+      >
+        Next
+      </Button>
+    </div>
     <Header>Now for the fun part!</Header>
     <p>Let's us get your flight data, so you don't have to worry about it.</p>
     <Form
       type=""
-      size="small"
+      size="big"
     >
       <Form.Input
         fluid
@@ -219,8 +272,28 @@ const step3 = (props) => {
 
 const step4 = (props) => {
 
-  const { firstName, lastName, department, jobTitle, username, swaFlightData } = props
+  const { firstName, lastName, department, jobTitle, email, password, swaFlightData, UpdateCurrentStep, currentStep } = { ...props }
   return <div>
+    <div css={ css`display: flex; flex-direction: row; justify-content: flex-end; width: auto;` }>
+      <Button
+        color="red"
+        inverted
+        size="large"
+        name="submit"
+        onClick={ () => UpdateCurrentStep(currentStep - 1) }
+      >
+        Back
+      </Button>
+      <Button
+        color="green"
+        inverted
+        size="large"
+        name="submit"
+        onClick={ () => { console.log(" creating account"); createEmailPasswordUser(email, password) } }
+      >
+        Create Account
+      </Button>
+    </div>
     <Header>Review and submit!</Header>
     <Grid columns={ 2 }>
       <Grid.Row>
@@ -232,20 +305,15 @@ const step4 = (props) => {
         <Grid.Column>Job Title: { jobTitle ? jobTitle : "" }</Grid.Column>
       </Grid.Row>
       <Grid.Row>
-        <Grid.Column>Username: { username ? username : "" }</Grid.Column>
+        <Grid.Column>Email: { email ? email : "" }</Grid.Column>
         <Grid.Column></Grid.Column>
       </Grid.Row>
       <Grid.Row>
         { swaFlightData ? renderFlightData(swaFlightData) : <p>No Flight Data</p> }
       </Grid.Row>
     </Grid>
-  </div>
+  </div >
 }
-
-const step5 = () => {
-  return <div>Step5</div>
-}
-
 
 
 
@@ -253,14 +321,15 @@ const step5 = () => {
 
 
 const AccountCreation = () => {
-  const [currentStep, UpdateCurrentStep] = React.useState(1);
+  const [currentStep, UpdateCurrentStep] = React.useState(2);
 
   const [firstName, updateFirstName] = React.useState("");
   const [lastName, updateLastName] = React.useState("");
   const [department, updateDepartment] = React.useState("");
   const [jobTitle, updateJobTitle] = React.useState("");
 
-  const [username, updateUserName] = React.useState("");
+  const [email, updateEmail] = React.useState("");
+  const [validEmail, updateValidEmail] = React.useState(true)
   const [password, updatePassword] = React.useState("");
   const [repeatPassword, updateRepeatPassword] = React.useState("")
 
@@ -268,22 +337,21 @@ const AccountCreation = () => {
   const [swapassword, updateSWAPassword] = React.useState("");
   const [swaFlightData, updateSwaFlightData] = React.useState(null);
   const [loading, updateLoading] = React.useState(false);
-  const [buttonProgressionStateDisabled, updateButtonProgressionStateDisabled] = React.useState(true)
 
   const step1props = {
-    firstName, updateFirstName, lastName, updateLastName, department, updateDepartment, jobTitle, updateJobTitle, updateButtonProgressionStateDisabled
+    firstName, updateFirstName, lastName, updateLastName, department, updateDepartment, jobTitle, updateJobTitle, UpdateCurrentStep, currentStep
   }
 
   const step2props = {
-    username, updateUserName, password, updatePassword, repeatPassword, updateRepeatPassword, updateButtonProgressionStateDisabled
+    email, updateEmail, validEmail, updateValidEmail, password, updatePassword, repeatPassword, updateRepeatPassword, currentStep, UpdateCurrentStep
   }
 
   const step3props = {
-    swausername, updateSWAUserName, swapassword, updateSWAPassword, swaFlightData, updateSwaFlightData, loading, updateLoading, updateButtonProgressionStateDisabled
+    swausername, updateSWAUserName, swapassword, updateSWAPassword, swaFlightData, updateSwaFlightData, loading, updateLoading, UpdateCurrentStep, currentStep
   }
 
   const step4props = {
-    firstName, lastName, department, jobTitle, username, swaFlightData
+    firstName, lastName, department, jobTitle, email, password, swaFlightData, UpdateCurrentStep, currentStep
   }
 
   // const checkPassword = () => {
@@ -308,7 +376,7 @@ const AccountCreation = () => {
     <Progress value={ currentStep } total="4" size="medium" color="green" active={ true } />
 
     <Container>
-      <div css={ css`display: flex; flex-direction: row; justify-content: flex-end; width: auto;` }>
+      {/* <div css={ css`display: flex; flex-direction: row; justify-content: flex-end; width: auto;` }>
         { (currentStep > 1 && currentStep < 5) &&
           <Button
             color="red"
@@ -325,7 +393,7 @@ const AccountCreation = () => {
             inverted
             size="large"
             name="submit"
-            disabled={ buttonProgressionStateDisabled }
+
             onClick={ () => currentStep == 4 ? null : UpdateCurrentStep(currentStep + 1) }
           >
             Next
@@ -337,12 +405,12 @@ const AccountCreation = () => {
             inverted
             size="large"
             name="submit"
-            onClick={ () => createEmailPasswordUser(username, password) }
+            onClick={ () => createEmailPasswordUser(email, password) }
           >
             Create Account
         </Button> }
 
-      </div>
+      </div> */}
 
       { renderStep(currentStep) }
 
