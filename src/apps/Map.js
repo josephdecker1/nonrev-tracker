@@ -163,21 +163,21 @@ const Map = props => {
         <Statistic.Group widths="four">
           <Statistic>
             <Statistic.Value>
-              { coverter.toWords(uniqueAirports.length) }
+              { uniqueAirports ? coverter.toWords(uniqueAirports.length) : null }
             </Statistic.Value>
             <Statistic.Label>Unique Airports</Statistic.Label>
           </Statistic>
 
           <Statistic>
             <Statistic.Value>
-              { flightData.length } <Icon name="plane" />
+              { flightData ? flightData.length : null } <Icon name="plane" />
             </Statistic.Value>
             <Statistic.Label>Total Flights</Statistic.Label>
           </Statistic>
 
           <Statistic>
             <Statistic.Value>
-              { totalDistanceTravelled.toLocaleString() }
+              { totalDistanceTravelled ? totalDistanceTravelled.toLocaleString() : null }
               <Icon name="flag checkered" />
             </Statistic.Value>
             <Statistic.Label>Miles Travelled</Statistic.Label>

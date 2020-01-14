@@ -27,65 +27,72 @@ const step1 = (props) => {
   const { firstName, updateFirstName, lastName, updateLastName, department, updateDepartment, jobTitle, updateJobTitle } = { ...props }
   return <div>
     <Header><Icon name="info" />Let's get your basic information</Header>
-    <Grid>
-      <Grid.Row>
-        <Grid.Column width={ 8 }>
-          <Form
-            type=""
-            size="small"
-          >
-            <Form.Input
-              fluid
-              iconPosition="left"
-              placeholder="First Name"
-              value={ firstName }
-              type="text"
-              onChange={ e => {
-                updateFirstName(e.target.value);
-              } }
-            />
-            <Form.Input
-              fluid
-              iconPosition="left"
-              placeholder="Last Name"
-              value={ lastName }
-              type="text"
-              onChange={ e => {
-                updateLastName(e.target.value);
-              } }
-            />
-          </Form>
-        </Grid.Column>
-        <Grid.Column width={ 8 }>
-          <Form
-            type=""
-            size="small"
-          >
-            <Form.Input
-              fluid
-              iconPosition="left"
-              placeholder="Department"
-              value={ department }
-              type="text"
-              onChange={ e => {
-                updateDepartment(e.target.value);
-              } }
-            />
+    <div css={ css`display: flex; justify-content: center;` }>
+      <Grid css={ css`width: 50%` }>
+        <Grid.Row css={ css`margin-top: 15px;` }>
+          <Grid.Column>
+            <Form
+              type=""
+              size="big"
+            >
+              <Form.Field required>
+                <label>First name</label>
+                <Form.Input
+                  fluid
+                  iconPosition="left"
+                  placeholder="First Name"
+                  value={ firstName }
+                  type="text"
+                  onChange={ e => {
+                    updateFirstName(e.target.value);
+                  } }
+                />
+              </Form.Field>
+              <Form.Field required>
+                <label>Last name</label>
+                <Form.Input
+                  fluid
+                  iconPosition="left"
+                  placeholder="Last Name"
+                  value={ lastName }
+                  type="text"
+                  onChange={ e => {
+                    updateLastName(e.target.value);
+                  } }
+                />
+              </Form.Field>
+              <Form.Field>
+                <label>Department</label>
+                <Form.Input
+                  fluid
+                  iconPosition="left"
+                  placeholder="Department"
+                  value={ department }
+                  type="text"
+                  onChange={ e => {
+                    updateDepartment(e.target.value);
+                  } }
+                />
+              </Form.Field>
+              <Form.Field>
+                <label>Job Title</label>
+                <Form.Input
+                  fluid
+                  iconPosition="left"
+                  placeholder="Job Title"
+                  value={ jobTitle }
+                  type="text"
+                  onChange={ e => {
+                    updateJobTitle(e.target.value);
+                  } }
+                />
+              </Form.Field>
+            </Form>
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
+    </div>
 
-            <Form.Input
-              fluid
-              iconPosition="left"
-              placeholder="Job Title"
-              value={ jobTitle }
-              type="text"
-              onChange={ e => {
-                updateJobTitle(e.target.value);
-              } }
-            />
-          </Form>
-        </Grid.Column>
-      </Grid.Row>
-    </Grid>
 
   </div>
 }
@@ -99,36 +106,45 @@ const step2 = (props) => {
       type=""
       size="small"
     >
-      <Form.Input
-        fluid
-        iconPosition="left"
-        placeholder="Username"
-        value={ username }
-        type="text"
-        onChange={ e => {
-          updateUserName(e.target.value);
-        } }
-      />
-      <Form.Input
-        fluid
-        iconPosition="left"
-        placeholder="Password"
-        value={ password }
-        type="password"
-        onChange={ e => {
-          updatePassword(e.target.value);
-        } }
-      />
-      <Form.Input
-        fluid
-        iconPosition="left"
-        placeholder="Password"
-        value={ repeatPassword }
-        type="password"
-        onChange={ e => {
-          updateRepeatPassword(e.target.value);
-        } }
-      />
+      <Form.Field required>
+        <label>First name</label>
+        <Form.Input
+          fluid
+          iconPosition="left"
+          placeholder="Username"
+          value={ username }
+          type="text"
+          onChange={ e => {
+            updateUserName(e.target.value);
+          } }
+        />
+      </Form.Field>
+      <Form.Field required>
+        <label>First name</label>
+        <Form.Input
+          fluid
+          iconPosition="left"
+          placeholder="Password"
+          value={ password }
+          type="password"
+          onChange={ e => {
+            updatePassword(e.target.value);
+          } }
+        />
+      </Form.Field>
+      <Form.Field required>
+        <label>First name</label>
+        <Form.Input
+          fluid
+          iconPosition="left"
+          placeholder="Password"
+          value={ repeatPassword }
+          type="password"
+          onChange={ e => {
+            updateRepeatPassword(e.target.value);
+          } }
+        />
+      </Form.Field>
     </Form>
   </div>
 }
@@ -252,17 +268,18 @@ const AccountCreation = () => {
   const [swapassword, updateSWAPassword] = React.useState("");
   const [swaFlightData, updateSwaFlightData] = React.useState(null);
   const [loading, updateLoading] = React.useState(false);
+  const [buttonProgressionStateDisabled, updateButtonProgressionStateDisabled] = React.useState(true)
 
   const step1props = {
-    firstName, updateFirstName, lastName, updateLastName, department, updateDepartment, jobTitle, updateJobTitle
+    firstName, updateFirstName, lastName, updateLastName, department, updateDepartment, jobTitle, updateJobTitle, updateButtonProgressionStateDisabled
   }
 
   const step2props = {
-    username, updateUserName, password, updatePassword, repeatPassword, updateRepeatPassword
+    username, updateUserName, password, updatePassword, repeatPassword, updateRepeatPassword, updateButtonProgressionStateDisabled
   }
 
   const step3props = {
-    swausername, updateSWAUserName, swapassword, updateSWAPassword, swaFlightData, updateSwaFlightData, loading, updateLoading
+    swausername, updateSWAUserName, swapassword, updateSWAPassword, swaFlightData, updateSwaFlightData, loading, updateLoading, updateButtonProgressionStateDisabled
   }
 
   const step4props = {
@@ -292,21 +309,23 @@ const AccountCreation = () => {
 
     <Container>
       <div css={ css`display: flex; flex-direction: row; justify-content: flex-end; width: auto;` }>
-        <Button
-          color="red"
-          inverted
-          size="large"
-          name="submit"
-          onClick={ () => currentStep == 1 ? null : UpdateCurrentStep(currentStep - 1) }
-        >
-          Back
-        </Button>
+        { (currentStep > 1 && currentStep < 5) &&
+          <Button
+            color="red"
+            inverted
+            size="large"
+            name="submit"
+            onClick={ () => currentStep == 1 ? null : UpdateCurrentStep(currentStep - 1) }
+          >
+            Back
+          </Button> }
         { currentStep < 4 &&
           <Button
             color="green"
             inverted
             size="large"
             name="submit"
+            disabled={ buttonProgressionStateDisabled }
             onClick={ () => currentStep == 4 ? null : UpdateCurrentStep(currentStep + 1) }
           >
             Next
