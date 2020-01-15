@@ -17,7 +17,7 @@ const Home = props => {
           <div>
             Signing you up!
             <div>
-              <AccountCreation />
+              <AccountCreation userRef={ props.userRef || null } />
             </div>
           </div>
 

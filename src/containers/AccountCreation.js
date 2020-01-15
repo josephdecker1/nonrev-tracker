@@ -16,16 +16,35 @@ import axios from 'axios';
 import isEmail from 'validator/es/lib/isEmail';
 import isEqual from 'validator/es/lib/equals'
 
-import { createEmailPasswordUser } from '../Auth'
+import { createEmailPasswordUser, setDatabaseReference } from '../Auth'
 import { setLatLgnAirportsForFlights, renderFlightData } from '../utils/flight_data'
 
 import firebaseApp from "../../firebase";
 
+const progressButtonDisabled = (...args) => {
 
+  console.log(args[args.length - 1].toString())
+
+  let disabled = true;
+  for (let arg in args) {
+    if (args[arg].length > 0) {
+      disabled = false
+    }
+    else if (typeof (args[arg]) === 'boolean' && args[arg].toString() == "true" && disabled == false) {
+      disabled = false
+    }
+    else {
+      disabled = true;
+    }
+  }
+
+  return disabled;
+}
 
 const step1 = (props) => {
 
   const { firstName, updateFirstName, lastName, updateLastName, department, updateDepartment, jobTitle, updateJobTitle, UpdateCurrentStep, currentStep } = { ...props }
+
   return <div>
     <div css={ css`display: flex; flex-direction: row; justify-content: flex-end; width: auto;` }>
       <Button
@@ -33,6 +52,7 @@ const step1 = (props) => {
         inverted
         size="large"
         name="submit"
+        disabled={ progressButtonDisabled(firstName, lastName) }
         onClick={ () => UpdateCurrentStep(currentStep + 1) }
       >
         Next
@@ -109,7 +129,23 @@ const step1 = (props) => {
 
 const step2 = (props) => {
 
-  const { email, updateEmail, validEmail, updateValidEmail, password, updatePassword, repeatPassword, updateRepeatPassword, UpdateCurrentStep, currentStep } = { ...props }
+  const { email, updateEmail, validEmail, updateValidEmail, password, updatePassword, UpdateCurrentStep, currentStep, checkPassword } = { ...props }
+
+  const displayEmailError = () => {
+    if (email.length == 0) {
+      return true
+    } else {
+      return isEmail(email)
+    }
+  }
+
+  const displayPasswordValidation = () => {
+    if (password.length == 0) {
+      return true
+    } else {
+      return checkPassword(password)
+    }
+  }
 
   return <div>
     <div css={ css`display: flex; flex-direction: row; justify-content: flex-end; width: auto;` }>
@@ -127,6 +163,7 @@ const step2 = (props) => {
         inverted
         size="large"
         name="submit"
+        disabled={ progressButtonDisabled(email, password, validEmail) }
         onClick={ () => UpdateCurrentStep(currentStep + 1) }
       >
         Next
@@ -145,10 +182,10 @@ const step2 = (props) => {
           placeholder="Email"
           value={ email }
           type="text"
-          onBlur={ () => updateValidEmail(isEmail(email)) }
-          error={ validEmail ? null : { content: 'Please enter a valid email', pointing: 'above' } }
+          error={ displayEmailError() ? null : { content: 'Please enter a valid email', pointing: 'above' } }
           onChange={ e => {
             updateEmail(e.target.value);
+            updateValidEmail(isEmail(email))
           } }
         />
       </Form.Field>
@@ -160,21 +197,9 @@ const step2 = (props) => {
           placeholder="Password"
           value={ password }
           type="password"
+          error={ displayPasswordValidation() ? null : { content: 'Password must contain at least 1 number, 1 lowercase, 1 uppercase and be at least 6 characters', pointing: 'above' } }
           onChange={ e => {
             updatePassword(e.target.value);
-          } }
-        />
-      </Form.Field>
-      <Form.Field required>
-        <label>Repeat Password</label>
-        <Form.Input
-          fluid
-          iconPosition="left"
-          placeholder="Password"
-          value={ repeatPassword }
-          type="password"
-          onChange={ e => {
-            updateRepeatPassword(e.target.value);
           } }
         />
       </Form.Field>
@@ -183,7 +208,7 @@ const step2 = (props) => {
 }
 
 const step3 = (props) => {
-  const { swausername, updateSWAUserName, swapassword, updateSWAPassword, swaFlightData, updateSwaFlightData, loading, updateLoading, UpdateCurrentStep, currentStep } = { ...props }
+  const { swausername, updateSWAUserName, swapassword, updateSWAPassword, swaFlightData, updateSwaFlightData, loading, updateLoading, UpdateCurrentStep, currentStep, uniqueAirports, milesTravelled, updateUniqueAirports, updateMilesTravelled } = { ...props }
 
   const fetchFlightData = () => {
     updateLoading(true);
@@ -196,7 +221,9 @@ const step3 = (props) => {
         password: swapassword
       }
     }).then((response) => {
-      const { updatedData } = setLatLgnAirportsForFlights(response.data)
+      const { updatedData, uniqueAirports, milesTravelled } = setLatLgnAirportsForFlights(response.data)
+      updateUniqueAirports(uniqueAirports);
+      updateMilesTravelled(milesTravelled);
       updateSwaFlightData(updatedData);
       updateLoading(false);
       console.log(response);
@@ -219,6 +246,7 @@ const step3 = (props) => {
         inverted
         size="large"
         name="submit"
+        disabled={ swaFlightData ? false : true }
         onClick={ () => UpdateCurrentStep(currentStep + 1) }
       >
         Next
@@ -272,7 +300,22 @@ const step3 = (props) => {
 
 const step4 = (props) => {
 
-  const { firstName, lastName, department, jobTitle, email, password, swaFlightData, UpdateCurrentStep, currentStep } = { ...props }
+  const { firstName, lastName, department, jobTitle, email, password, swaFlightData, UpdateCurrentStep, currentStep, uniqueAirports, milesTravelled } = { ...props }
+
+  const promiseCallback = (userRef) => {
+    console.log("Doing stuff");
+    userRef.set({
+      firstName,
+      lastName,
+      department,
+      jobTitle,
+      email,
+      flight_data: swaFlightData,
+      uniqueAirports,
+      totalDistanceTravelled: milesTravelled
+    })
+  }
+
   return <div>
     <div css={ css`display: flex; flex-direction: row; justify-content: flex-end; width: auto;` }>
       <Button
@@ -289,7 +332,9 @@ const step4 = (props) => {
         inverted
         size="large"
         name="submit"
-        onClick={ () => { console.log(" creating account"); createEmailPasswordUser(email, password) } }
+        onClick={ () => {
+          createEmailPasswordUser(email, password, promiseCallback)
+        } }
       >
         Create Account
       </Button>
@@ -320,8 +365,9 @@ const step4 = (props) => {
 
 
 
-const AccountCreation = () => {
-  const [currentStep, UpdateCurrentStep] = React.useState(2);
+const AccountCreation = (props) => {
+
+  const [currentStep, UpdateCurrentStep] = React.useState(1);
 
   const [firstName, updateFirstName] = React.useState("");
   const [lastName, updateLastName] = React.useState("");
@@ -329,34 +375,41 @@ const AccountCreation = () => {
   const [jobTitle, updateJobTitle] = React.useState("");
 
   const [email, updateEmail] = React.useState("");
-  const [validEmail, updateValidEmail] = React.useState(true)
+  const [validEmail, updateValidEmail] = React.useState(false)
   const [password, updatePassword] = React.useState("");
-  const [repeatPassword, updateRepeatPassword] = React.useState("")
+  const [validPassword, updateValidPassword] = React.useState("")
 
   const [swausername, updateSWAUserName] = React.useState("");
   const [swapassword, updateSWAPassword] = React.useState("");
   const [swaFlightData, updateSwaFlightData] = React.useState(null);
   const [loading, updateLoading] = React.useState(false);
 
+  const [uniqueAirports, updateUniqueAirports] = React.useState([]);
+  const [milesTravelled, updateMilesTravelled] = React.useState(0)
+
+
+  const checkPassword = (str) => {
+    const re = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
+    return re.test(str);
+  }
+
   const step1props = {
     firstName, updateFirstName, lastName, updateLastName, department, updateDepartment, jobTitle, updateJobTitle, UpdateCurrentStep, currentStep
   }
 
   const step2props = {
-    email, updateEmail, validEmail, updateValidEmail, password, updatePassword, repeatPassword, updateRepeatPassword, currentStep, UpdateCurrentStep
+    email, updateEmail, validEmail, updateValidEmail, password, updatePassword, validPassword, updateValidPassword, currentStep, UpdateCurrentStep, checkPassword
   }
 
   const step3props = {
-    swausername, updateSWAUserName, swapassword, updateSWAPassword, swaFlightData, updateSwaFlightData, loading, updateLoading, UpdateCurrentStep, currentStep
+    swausername, updateSWAUserName, swapassword, updateSWAPassword, swaFlightData, updateSwaFlightData, loading, updateLoading, UpdateCurrentStep, currentStep, uniqueAirports, milesTravelled, updateUniqueAirports, updateMilesTravelled
   }
 
   const step4props = {
-    firstName, lastName, department, jobTitle, email, password, swaFlightData, UpdateCurrentStep, currentStep
+    firstName, lastName, department, jobTitle, email, password, swaFlightData, uniqueAirports, milesTravelled, UpdateCurrentStep, currentStep
   }
 
-  // const checkPassword = () => {
 
-  // }
 
   const renderStep = (step) => {
     switch (step) {
@@ -376,41 +429,6 @@ const AccountCreation = () => {
     <Progress value={ currentStep } total="4" size="medium" color="green" active={ true } />
 
     <Container>
-      {/* <div css={ css`display: flex; flex-direction: row; justify-content: flex-end; width: auto;` }>
-        { (currentStep > 1 && currentStep < 5) &&
-          <Button
-            color="red"
-            inverted
-            size="large"
-            name="submit"
-            onClick={ () => currentStep == 1 ? null : UpdateCurrentStep(currentStep - 1) }
-          >
-            Back
-          </Button> }
-        { currentStep < 4 &&
-          <Button
-            color="green"
-            inverted
-            size="large"
-            name="submit"
-
-            onClick={ () => currentStep == 4 ? null : UpdateCurrentStep(currentStep + 1) }
-          >
-            Next
-        </Button> }
-
-        { currentStep === 4 &&
-          <Button
-            color="green"
-            inverted
-            size="large"
-            name="submit"
-            onClick={ () => createEmailPasswordUser(email, password) }
-          >
-            Create Account
-        </Button> }
-
-      </div> */}
 
       { renderStep(currentStep) }
 

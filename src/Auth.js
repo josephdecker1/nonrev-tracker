@@ -23,7 +23,6 @@ export const useAuth = auth => {
           userRef.set({
             created: new Date(),
             userName: authState.displayName,
-            flight_data: []
           });
         }
       });
@@ -103,10 +102,13 @@ export const emailPasswordLogin = (username, password) => {
     });
 };
 
-export const createEmailPasswordUser = (username, password) => {
+export const createEmailPasswordUser = async (username, password, promiseCallback) => {
   firebaseApp
     .auth()
     .createUserWithEmailAndPassword(username, password)
+    .then(function (user) {
+      promiseCallback(setDatabaseReference(user.user))
+    })
     .catch(function (error) {
       // Handle Errors here.
 
@@ -121,4 +123,24 @@ export const createEmailPasswordUser = (username, password) => {
 
 export const logout = () => {
   firebaseApp.auth().signOut();
+};
+
+export const setDatabaseReference = user => {
+  let userRef = null;
+
+  if (user) {
+    userRef = db.collection("users").doc(user.uid);
+    userRef.get().then(doc => {
+      if (doc.exists) {
+        //don't do anything, it exists!
+      } else {
+        //doc doesn't exist yet, so we're gonna make one for the user
+        userRef.set({
+          created: new Date(),
+          userName: user.displayName,
+        });
+      }
+    });
+  }
+  return userRef;
 };
