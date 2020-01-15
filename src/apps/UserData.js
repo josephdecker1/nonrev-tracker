@@ -141,46 +141,6 @@ const UserData = props => {
         );
       }) }
 
-      <div
-        css={ css`
-          padding-top: 10px;
-          display: inline-block;
-        `}
-      >
-        <form onSubmit={ handleSubmit } id="flightForm">
-          <Button
-            color="green"
-            htmlFor="file"
-            id="fileUpload"
-            css={ css`
-              ${uploadButton}
-            `}
-          >
-            <label htmlFor="file">Upload New Flights</label>
-          </Button>
-          <input
-            type="file"
-            onChange={ handleChange }
-            css={ css`
-              ${uploadFormInput}
-            `}
-            id="file"
-          />
-          { flights_uploaded && (
-            <Button
-              type="submit"
-              form="flightForm"
-              value="Submit"
-              css={ css`
-                ${uploadButton} margin-left: 5px;
-                padding: 6px 2px 6px 2px;
-              `}
-            >
-              Submit Flights
-            </Button>
-          ) }
-        </form>
-      </div>
       { flights_uploaded
         ? flights_uploaded && renderData(flightData)
         : flight_Data.length > 0 && renderData(flight_Data) }
