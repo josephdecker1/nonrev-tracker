@@ -4,6 +4,7 @@ import { css } from "@emotion/core";
 import { Button, Table, Container } from "semantic-ui-react";
 import { uploadButton, uploadFormInput, colors } from "../app_css";
 import { getDistance, convertDistance, getCenterOfBounds } from "geolib";
+import { setLatLgnAirportsForFlights } from '../utils/flight_data'
 
 import airport_data from "../../airports.json";
 
@@ -27,7 +28,6 @@ const UserData = props => {
         console.log("USERDATA => " + JSON.stringify(doc.data()));
         updateUserData(doc.data());
         updateFlight_Data(doc.data().flight_data);
-        // return doc.data();
       }
     });
   }, [user]);
@@ -42,55 +42,20 @@ const UserData = props => {
     if (jsonFile) {
       reader.onloadend = e => {
         let updatedData = JSON.parse(reader.result);
-        let originLatLng;
-        let destinationLatLng;
-        let distance;
-        let flights_latlng = [];
-        let milesTravelled = 0;
-        let uniqueAirports = [];
 
-        updatedData = updatedData.map(flight => {
-          console.log(flight);
+        updatedData = setLatLgnAirportsForFlights(updatedData)
 
-          originLatLng = {
-            lat: airports[flight["Origin"]].LAT,
-            lng: airports[flight["Origin"]].LNG
-          };
-          destinationLatLng = {
-            lat: airports[flight["Destination"]].LAT,
-            lng: airports[flight["Destination"]].LNG
-          };
-          distance = Math.floor(
-            convertDistance(
-              getDistance(originLatLng, destinationLatLng, 1),
-              "mi"
-            )
-          );
-
-          flights_latlng.push(originLatLng);
-          flights_latlng.push(destinationLatLng);
-          milesTravelled += distance;
-          if (uniqueAirports.indexOf(flight["Origin"]) < 0) {
-            uniqueAirports.push(flight["Origin"]);
-          }
-          if (uniqueAirports.indexOf(flight["Destination"]) < 0) {
-            uniqueAirports.push(flight["Destination"]);
-          }
-
-          return { ...flight, originLatLng, destinationLatLng, distance };
-        });
-
-        let flight_center_bound = getCenterOfBounds(flights_latlng);
-        console.log(uniqueAirports);
+        let flight_center_bound = getCenterOfBounds(updatedData.flights_latlng);
+        console.log(updatedData.uniqueAirports);
 
         updateFlightsUploaded(true);
         updateMapCenterBounds({
           lat: flight_center_bound.latitude,
           lng: flight_center_bound.longitude
         });
-        updateFlightData(updatedData);
-        updateTotalDistanceTravelled(milesTravelled);
-        updateUniqueAirports(uniqueAirports);
+        updateFlightData(updatedData.updatedData);
+        updateTotalDistanceTravelled(updatedData.milesTravelled);
+        updateUniqueAirports(updatedData.uniqueAirports);
         updateZoom(5);
       };
     }
@@ -111,12 +76,12 @@ const UserData = props => {
       <Table
         aria-label="flight table"
         size="small"
-        css={css`
+        css={ css`
           width: 100%;
         `}
       >
         <Table.Header
-          css={css`
+          css={ css`
             background-color: ${colors.green};
           `}
         >
@@ -132,26 +97,26 @@ const UserData = props => {
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {data.map(row => (
+          { data.map(row => (
             <Table.Row
-              key={`${row["PNR"]}-${Math.floor(Math.random() * 10000) + 1}`}
+              key={ `${row["PNR"]}-${Math.floor(Math.random() * 10000) + 1}` }
             >
               <Table.Cell component="th" scope="row">
-                {row["PNR"]}
+                { row["PNR"] }
               </Table.Cell>
-              <Table.Cell align="right">{row["Flight Date"]}</Table.Cell>
-              <Table.Cell align="right">{row["Flight Number"]}</Table.Cell>
-              <Table.Cell align="right">{row["Origin"]}</Table.Cell>
+              <Table.Cell align="right">{ row["Flight Date"] }</Table.Cell>
+              <Table.Cell align="right">{ row["Flight Number"] }</Table.Cell>
+              <Table.Cell align="right">{ row["Origin"] }</Table.Cell>
               <Table.Cell center="right">
-                {JSON.stringify(row["originLatLng"])}
+                { JSON.stringify(row["originLatLng"]) }
               </Table.Cell>
-              <Table.Cell align="center">{row["Destination"]}</Table.Cell>
+              <Table.Cell align="center">{ row["Destination"] }</Table.Cell>
               <Table.Cell center="right">
-                {JSON.stringify(row["destinationLatLng"])}
+                { JSON.stringify(row["destinationLatLng"]) }
               </Table.Cell>
-              <Table.Cell align="right">{row["distance"]}</Table.Cell>
+              <Table.Cell align="right">{ row["distance"] }</Table.Cell>
             </Table.Row>
-          ))}
+          )) }
         </Table.Body>
       </Table>
     );
@@ -159,35 +124,35 @@ const UserData = props => {
 
   return (
     <>
-      <h1>Hello, {userData?.user?.split(" ")[0]}, Here's your flight data.</h1>
-      {Object.entries(userData).map(key => {
+      <h1>Hello, { userData?.user?.split(" ")[0] }, Here's your flight data.</h1>
+      { Object.entries(userData).map(key => {
         console.log(key);
         if (key[0] == "flight_data") {
           return (
-            <div key={`--${uuid()}`}>
-              {key[0].toString()} :: {"flight data; lots of it"}
+            <div key={ `--${uuid()}` }>
+              { key[0].toString() } :: { "flight data; lots of it" }
             </div>
           );
         }
         return (
-          <div key={`--${uuid()}`}>
-            {key[0].toString()} :: {key[1] ? key[1].toString() : "--"}
+          <div key={ `--${uuid()}` }>
+            { key[0].toString() } :: { key[1] ? key[1].toString() : "--" }
           </div>
         );
-      })}
+      }) }
 
       <div
-        css={css`
+        css={ css`
           padding-top: 10px;
           display: inline-block;
         `}
       >
-        <form onSubmit={handleSubmit} id="flightForm">
+        <form onSubmit={ handleSubmit } id="flightForm">
           <Button
             color="green"
             htmlFor="file"
             id="fileUpload"
-            css={css`
+            css={ css`
               ${uploadButton}
             `}
           >
@@ -195,30 +160,30 @@ const UserData = props => {
           </Button>
           <input
             type="file"
-            onChange={handleChange}
-            css={css`
+            onChange={ handleChange }
+            css={ css`
               ${uploadFormInput}
             `}
             id="file"
           />
-          {flights_uploaded && (
+          { flights_uploaded && (
             <Button
               type="submit"
               form="flightForm"
               value="Submit"
-              css={css`
+              css={ css`
                 ${uploadButton} margin-left: 5px;
                 padding: 6px 2px 6px 2px;
               `}
             >
               Submit Flights
             </Button>
-          )}
+          ) }
         </form>
       </div>
-      {flights_uploaded
+      { flights_uploaded
         ? flights_uploaded && renderData(flightData)
-        : flight_Data.length > 0 && renderData(flight_Data)}
+        : flight_Data.length > 0 && renderData(flight_Data) }
     </>
   );
 };

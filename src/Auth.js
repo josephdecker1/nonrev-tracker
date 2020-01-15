@@ -23,7 +23,6 @@ export const useAuth = auth => {
           userRef.set({
             created: new Date(),
             userName: authState.displayName,
-            flight_data: []
           });
         }
       });
@@ -48,7 +47,7 @@ export const googleLogin = () => {
   firebaseApp
     .auth()
     .signInWithPopup(providers.Google)
-    .then(function(result) {
+    .then(function (result) {
       // This gives you a Google Access Token.
       let token = result.credential.accessToken;
       // The signed-in user info.
@@ -63,7 +62,7 @@ export const facebookLogin = () => {
   firebaseApp
     .auth()
     .signInWithPopup(providers.Facebook)
-    .then(function(result) {
+    .then(function (result) {
       // This gives you a Google Access Token.
       let token = result.credential.accessToken;
       // The signed-in user info.
@@ -78,7 +77,7 @@ export const twitterLogin = () => {
   firebaseApp
     .auth()
     .signInWithPopup(providers.Twitter)
-    .then(function(result) {
+    .then(function (result) {
       // This gives you a Google Access Token.
       let token = result.credential.accessToken;
       let secret = result.credential.secret;
@@ -94,7 +93,7 @@ export const emailPasswordLogin = (username, password) => {
   return firebaseApp
     .auth()
     .signInWithEmailAndPassword(username, password)
-    .catch(function(error) {
+    .catch(function (error) {
       // Handle Errors here.
       let errorCode = error.code;
       let errorMessage = error.message;
@@ -103,14 +102,20 @@ export const emailPasswordLogin = (username, password) => {
     });
 };
 
-export const createEmailPasswordUser = (username, password) => {
+export const createEmailPasswordUser = async (username, password, promiseCallback) => {
   firebaseApp
     .auth()
     .createUserWithEmailAndPassword(username, password)
-    .catch(function(error) {
+    .then(function (user) {
+      promiseCallback(setDatabaseReference(user.user))
+    })
+    .catch(function (error) {
       // Handle Errors here.
+
       let errorCode = error.code;
       let errorMessage = error.message;
+
+      console.log(`ErrorCode: ${errorCode}\nErrorMessage: ${errorMessage}`)
 
       return [errorCode, errorMessage];
     });
@@ -118,6 +123,24 @@ export const createEmailPasswordUser = (username, password) => {
 
 export const logout = () => {
   firebaseApp.auth().signOut();
+};
 
-  // TODO: Update the time that the user manually signed out
+export const setDatabaseReference = user => {
+  let userRef = null;
+
+  if (user) {
+    userRef = db.collection("users").doc(user.uid);
+    userRef.get().then(doc => {
+      if (doc.exists) {
+        //don't do anything, it exists!
+      } else {
+        //doc doesn't exist yet, so we're gonna make one for the user
+        userRef.set({
+          created: new Date(),
+          userName: user.displayName,
+        });
+      }
+    });
+  }
+  return userRef;
 };

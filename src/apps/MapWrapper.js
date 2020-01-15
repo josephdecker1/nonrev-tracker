@@ -2,8 +2,6 @@ import React from "react";
 import Map from "./Map";
 import { css } from "@emotion/core";
 
-import { colors } from "../app_css";
-
 const MapWrapper = props => {
   const { userRef } = props;
   const [mapCenterBounds, updateMapCenterBounds] = React.useState({
@@ -11,7 +9,6 @@ const MapWrapper = props => {
     lng: -96.7969879
   });
   const [zoom, updateZoom] = React.useState(5);
-  const [flightData, updateFlightData] = React.useState([]);
   const [totalDistanceTravelled, updateTotalDistanceTravelled] = React.useState(
     0
   );
@@ -22,7 +19,6 @@ const MapWrapper = props => {
     userRef.get().then(doc => {
       if (doc.exists) {
         // console.log("USERDATA => " + JSON.stringify(doc.data().flight_data));
-        updateFlightData(doc.data().flight_data);
         updateTotalDistanceTravelled(doc.data().totalDistanceTravelled);
         updateUniqueAirports(doc.data().uniqueAirports);
         // return doc.data();
@@ -32,20 +28,19 @@ const MapWrapper = props => {
 
   return (
     <div
-      css={css`
+      css={ css`
         width: 100%;
         height: 100vh;
         padding: 0px;
       `}
     >
       <Map
-        center={mapCenterBounds}
-        zoom={zoom}
-        flightData={flightData || []}
-        navWidth={navWidth}
-        flightCount={flightData.length || 0}
-        uniqueAirports={uniqueAirports}
-        totalDistanceTravelled={totalDistanceTravelled}
+        center={ mapCenterBounds }
+        zoom={ zoom }
+        navWidth={ navWidth }
+        uniqueAirports={ uniqueAirports }
+        totalDistanceTravelled={ totalDistanceTravelled }
+        userRef={ userRef }
       />
     </div>
   );

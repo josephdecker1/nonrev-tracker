@@ -12,12 +12,12 @@ import { mapMarkerStyle, iconStyle, colors } from "../app_css";
 
 const MapIcon = () => (
   <div
-    css={css`
+    css={ css`
       ${mapMarkerStyle}
     `}
   >
     <MdAirplanemodeActive
-      css={css`
+      css={ css`
         ${iconStyle}
       `}
     />
@@ -25,6 +25,7 @@ const MapIcon = () => (
 );
 
 const Map = props => {
+  const { userRef } = props;
   const [location, updateLocation] = useState({
     center: {
       lat: 32.7766642,
@@ -36,17 +37,20 @@ const Map = props => {
   const [flightPaths, updateFlightPaths] = useState([]);
   const [map, updateMap] = useState(null);
   const [maps, updateMaps] = useState(null);
+  const [mapsLoaded, updateMapsLoaded] = useState(false);
+
+  const [flightData, updateFlightData] = React.useState([]);
 
   const {
     navWidth,
     uniqueAirports,
     totalDistanceTravelled,
-    flightCount
   } = props;
 
   const handleApiLoaded = (map, maps) => {
     updateMap(map);
     updateMaps(maps);
+    updateMapsLoaded(true);
   };
 
   useEffect(() => {
@@ -54,22 +58,35 @@ const Map = props => {
   }, [props.center, props.zoom]);
 
   useEffect(() => {
+    userRef.get().then(doc => {
+      if (doc.exists) {
+        // console.log("USERDATA => " + JSON.stringify(doc.data().flight_data));
+        updateFlightData(doc.data().flight_data);
+        // return doc.data();
+      }
+    });
     updateFlights([]);
     updateFlights(createMapIcons());
-    setMapLines();
-  }, [props.flightData]);
+    setMapLines()
+
+    return () => {
+      updateFlights([])
+      updateFlightPaths([])
+    }
+
+  }, [mapsLoaded]);
 
   const createMapIcons = () => {
-    let components = props.flightData.flatMap(flight => [
+    let components = flightData.flatMap(flight => [
       <MapIcon
-        key={`${flight.PNR}-${uuid()}`}
-        lat={flight.destinationLatLng.lat}
-        lng={flight.destinationLatLng.lng}
+        key={ `${flight.PNR}-${uuid()}` }
+        lat={ flight.destinationLatLng.lat }
+        lng={ flight.destinationLatLng.lng }
       />,
       <MapIcon
-        key={`${flight.PNR}-${uuid()}`}
-        lat={flight.originLatLng.lat}
-        lng={flight.originLatLng.lng}
+        key={ `${flight.PNR}-${uuid()}` }
+        lat={ flight.originLatLng.lat }
+        lng={ flight.originLatLng.lng }
       />
     ]);
     return components;
@@ -80,7 +97,7 @@ const Map = props => {
       flightPaths.map(flightPath => flightPath.setMap(null));
     }
 
-    let new_flightPaths = props.flightData.map(flight => {
+    let new_flightPaths = flightData.map(flight => {
       let flight_lines = [
         { lat: flight.originLatLng.lat, lng: flight.originLatLng.lng },
         { lat: flight.destinationLatLng.lat, lng: flight.destinationLatLng.lng }
@@ -100,9 +117,9 @@ const Map = props => {
   };
 
   return (
-    <div style={{ height: "100%", width: "100%" }}>
+    <div style={ { height: "100%", width: "100%" } }>
       <div
-        css={css`
+        css={ css`
           position: absolute;
           top: 7px;
           left: calc(${navWidth}px + 7px);
@@ -118,49 +135,49 @@ const Map = props => {
         />
       </div>
       <div
-        style={{
+        style={ {
           height: "80%",
           width: "100%",
           position: "relative",
           zIndex: "1"
-        }}
+        } }
       >
         <GoogleMapReact
-          bootstrapURLKeys={{ key: "AIzaSyBbPtzvE19paEy_skkz8ter4sdIP2ZRWQI" }}
-          center={location.center}
-          zoom={location.zoom}
+          bootstrapURLKeys={ { key: "AIzaSyBbPtzvE19paEy_skkz8ter4sdIP2ZRWQI" } }
+          center={ location.center }
+          zoom={ location.zoom }
           yesIWantToUseGoogleMapApiInternals
-          onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)}
+          onGoogleApiLoaded={ ({ map, maps }) => handleApiLoaded(map, maps) }
         >
-          {flights.length > 0 ? flights.map(flight => flight) : null}
+          { flights.length > 0 ? flights.map(flight => flight) : null }
         </GoogleMapReact>
       </div>
       <div
-        style={{
+        style={ {
           padding: "10px",
           height: "20%",
           width: "100%",
           backgroundColor: colors.yellow
-        }}
+        } }
       >
         <Statistic.Group widths="four">
           <Statistic>
             <Statistic.Value>
-              {coverter.toWords(uniqueAirports.length)}
+              { uniqueAirports ? coverter.toWords(uniqueAirports.length) : null }
             </Statistic.Value>
             <Statistic.Label>Unique Airports</Statistic.Label>
           </Statistic>
 
           <Statistic>
             <Statistic.Value>
-              {flightCount} <Icon name="plane" />
+              { flightData ? flightData.length : null } <Icon name="plane" />
             </Statistic.Value>
             <Statistic.Label>Total Flights</Statistic.Label>
           </Statistic>
 
           <Statistic>
             <Statistic.Value>
-              {totalDistanceTravelled.toLocaleString()}
+              { totalDistanceTravelled ? totalDistanceTravelled.toLocaleString() : null }
               <Icon name="flag checkered" />
             </Statistic.Value>
             <Statistic.Label>Miles Travelled</Statistic.Label>

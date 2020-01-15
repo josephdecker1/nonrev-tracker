@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from "react";
+import React, { Suspense } from "react";
 import { css } from "@emotion/core";
 
 const UserData = React.lazy(() => import("../apps/UserData"));
@@ -14,22 +14,22 @@ const renderContent = (user, location, userRef, navWidth) => {
       return (
         <>
           <div
-            css={css`
+            css={ css`
               width: 100%;
               height: 100vh;
               padding: 0px;
             `}
           >
-            <Map userRef={userRef} navWidth={navWidth} />
+            <Map userRef={ userRef } navWidth={ navWidth } />
           </div>
         </>
       );
     case "/account":
-      return <Account user={user} userRef={userRef} />;
+      return <Account user={ user } userRef={ userRef } />;
     case "/userdata":
-      return <UserData user={user} userRef={userRef} />;
+      return <UserData user={ user } userRef={ userRef } />;
     default:
-      return <Home user={user} userRef={userRef} />;
+      return <Home user={ user } userRef={ userRef } css={ css`width: calc(100% - ${navWidth}px);` } />;
   }
 };
 
@@ -38,8 +38,8 @@ const Content = props => {
 
   return (
     <div>
-      <Suspense fallback={<Loader />}>
-        {renderContent(user, location, userRef, navWidth)}
+      <Suspense fallback={ <Loader /> }>
+        { renderContent(user, location, userRef, navWidth) }
       </Suspense>
     </div>
   );
