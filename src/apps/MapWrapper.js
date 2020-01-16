@@ -1,6 +1,7 @@
 import React from "react";
 import Map from "./Map";
 import { css } from "@emotion/core";
+import ReactDependentScript from "react-dependent-script";
 
 const MapWrapper = props => {
   const { userRef } = props;
@@ -13,15 +14,17 @@ const MapWrapper = props => {
     0
   );
   const [uniqueAirports, updateUniqueAirports] = React.useState([]);
+  const [flightData, updateFlightData] = React.useState([])
   const navWidth = props.navWidth;
 
   React.useEffect(() => {
     userRef.get().then(doc => {
       if (doc.exists) {
-        // console.log("USERDATA => " + JSON.stringify(doc.data().flight_data));
+        console.log("Getting your data in the map wrapper")
+        console.log(doc.data().flight_data)
         updateTotalDistanceTravelled(doc.data().totalDistanceTravelled);
         updateUniqueAirports(doc.data().uniqueAirports);
-        // return doc.data();
+        updateFlightData(doc.data().flight_data)
       }
     });
   }, []);
@@ -34,14 +37,21 @@ const MapWrapper = props => {
         padding: 0px;
       `}
     >
-      <Map
-        center={ mapCenterBounds }
-        zoom={ zoom }
-        navWidth={ navWidth }
-        uniqueAirports={ uniqueAirports }
-        totalDistanceTravelled={ totalDistanceTravelled }
-        userRef={ userRef }
-      />
+      <ReactDependentScript
+        scripts={ [
+          "https://maps.googleapis.com/maps/api/js?key=AIzaSyA6vKL6Q4u5ZhGAJlYOMkQZ13pxCUXOe9k"
+        ] }
+      >
+        <Map
+          center={ mapCenterBounds }
+          zoom={ zoom }
+          navWidth={ navWidth }
+          uniqueAirports={ uniqueAirports }
+          totalDistanceTravelled={ totalDistanceTravelled }
+          userRef={ userRef }
+          flightData={ flightData }
+        />
+      </ReactDependentScript>
     </div>
   );
 };
