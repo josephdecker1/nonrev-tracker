@@ -6,10 +6,12 @@ import { Container } from "semantic-ui-react";
 import Loader from "../components/loader";
 import { colors } from "../app_css";
 
-const AccountCreation = React.lazy(() => import("../containers/AccountCreation"));
+const AccountCreation = React.lazy(() =>
+  import("../containers/AccountCreation")
+);
 
 const Home = props => {
-  const renderContent = (location) => {
+  const renderContent = location => {
     let component = null;
     if (location.hash.replace("#", "") === "sign-up") {
       component = (
@@ -17,30 +19,29 @@ const Home = props => {
           <div>
             Signing you up!
             <div>
-              <AccountCreation userRef={ props.userRef || null } />
+              <AccountCreation userRef={props.userRef || null} />
             </div>
           </div>
-
         </>
-      )
+      );
     } else {
-      component = (<h1>hello! Home page</h1>)
+      component = <h1>hello! Home page</h1>;
     }
 
     return component;
-  }
+  };
 
   let history = useHistory();
-  console.log(history)
+
   return (
-    <Suspense fallback={ <Loader /> }>
+    <Suspense fallback={<Loader />}>
       <div
-        css={ css`
+        css={css`
           background-color: ${colors.white};
           padding: 10px;
         `}
       >
-        { renderContent(history.location) }
+        {renderContent(history.location)}
       </div>
     </Suspense>
   );
