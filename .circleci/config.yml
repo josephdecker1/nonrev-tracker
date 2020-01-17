@@ -12,11 +12,8 @@ jobs:
           name: install node modules
           command: npm install
       - run:
-          name: copy env vars to keys file
-          command: cp keys.js.template keys.js
-      - run:
           name: substitute key template from env vars
-          command: sed -i "s/google_api_key/$GOOGLE_MAPS_KEY/g" keys.js
+          command: sed -i "s/google_api_key/$GOOGLE_MAPS_KEY/g" firebase.js
       - run:
           name: cat the keys file
           command: cat keys.js

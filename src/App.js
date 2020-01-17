@@ -8,7 +8,7 @@ import { colors } from "./app_css";
 import { useAuth } from "./Auth";
 import { AuthenticatedUser } from "./containers/AuthenticatedUser";
 import firebaseApp from "../firebase";
-import keys from "../keys";
+import { firebaseConfig } from "../firebase";
 import { SideNavigation } from "./containers/SideNavigation";
 
 const App = () => {
@@ -23,7 +23,7 @@ const App = () => {
 
     const script = document.createElement("script");
     script.async = true;
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${keys.GOOGLE_API_KEY}`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${firebaseConfig.apiKey}`;
     // //For head
     document.head.appendChild(script);
   }, []);
