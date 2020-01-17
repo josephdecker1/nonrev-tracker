@@ -52,7 +52,6 @@ export const googleLogin = () => {
       let token = result.credential.accessToken;
       // The signed-in user info.
       let user = result.user;
-      console.log(user);
       return user;
       // TODO: Update the user object for when they logged in
     });
@@ -67,7 +66,6 @@ export const facebookLogin = () => {
       let token = result.credential.accessToken;
       // The signed-in user info.
       let user = result.user;
-      console.log(user);
       return user;
       // TODO: Update the user object for when they logged in
     });
@@ -83,7 +81,6 @@ export const twitterLogin = () => {
       let secret = result.credential.secret;
       // The signed-in user info.
       let user = result.user;
-      console.log(user);
       return user;
       // TODO: Update the user object for when they logged in
     });
@@ -114,8 +111,6 @@ export const createEmailPasswordUser = async (username, password, promiseCallbac
 
       let errorCode = error.code;
       let errorMessage = error.message;
-
-      console.log(`ErrorCode: ${errorCode}\nErrorMessage: ${errorMessage}`)
 
       return [errorCode, errorMessage];
     });

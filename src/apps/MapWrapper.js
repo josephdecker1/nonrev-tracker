@@ -1,9 +1,10 @@
 import React from "react";
 import Map from "./Map";
 import { css } from "@emotion/core";
+import ReactDependentScript from "react-dependent-script";
 
 const MapWrapper = props => {
-  const { userRef } = props;
+  const { userRef, flightData } = props;
   const [mapCenterBounds, updateMapCenterBounds] = React.useState({
     lat: 32.7766642,
     lng: -96.7969879
@@ -18,10 +19,8 @@ const MapWrapper = props => {
   React.useEffect(() => {
     userRef.get().then(doc => {
       if (doc.exists) {
-        // console.log("USERDATA => " + JSON.stringify(doc.data().flight_data));
         updateTotalDistanceTravelled(doc.data().totalDistanceTravelled);
         updateUniqueAirports(doc.data().uniqueAirports);
-        // return doc.data();
       }
     });
   }, []);
@@ -34,14 +33,15 @@ const MapWrapper = props => {
         padding: 0px;
       `}
     >
-      <Map
-        center={ mapCenterBounds }
-        zoom={ zoom }
-        navWidth={ navWidth }
-        uniqueAirports={ uniqueAirports }
-        totalDistanceTravelled={ totalDistanceTravelled }
-        userRef={ userRef }
-      />
+        <Map
+          center={ mapCenterBounds }
+          zoom={ zoom }
+          navWidth={ navWidth }
+          uniqueAirports={ uniqueAirports }
+          totalDistanceTravelled={ totalDistanceTravelled }
+          userRef={ userRef }
+          flightData={ flightData }
+        />
     </div>
   );
 };

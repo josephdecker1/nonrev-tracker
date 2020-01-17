@@ -25,7 +25,6 @@ const MapIcon = () => (
 );
 
 const Map = props => {
-  const { userRef } = props;
   const [location, updateLocation] = useState({
     center: {
       lat: 32.7766642,
@@ -33,48 +32,17 @@ const Map = props => {
     },
     zoom: 15
   });
-  const [flights, updateFlights] = useState([]);
-  const [flightPaths, updateFlightPaths] = useState([]);
-  const [map, updateMap] = useState(null);
-  const [maps, updateMaps] = useState(null);
-  const [mapsLoaded, updateMapsLoaded] = useState(false);
-
-  const [flightData, updateFlightData] = React.useState([]);
 
   const {
     navWidth,
     uniqueAirports,
     totalDistanceTravelled,
+    flightData
   } = props;
-
-  const handleApiLoaded = (map, maps) => {
-    updateMap(map);
-    updateMaps(maps);
-    updateMapsLoaded(true);
-  };
 
   useEffect(() => {
     updateLocation({ center: props.center, zoom: props.zoom });
   }, [props.center, props.zoom]);
-
-  useEffect(() => {
-    userRef.get().then(doc => {
-      if (doc.exists) {
-        // console.log("USERDATA => " + JSON.stringify(doc.data().flight_data));
-        updateFlightData(doc.data().flight_data);
-        // return doc.data();
-      }
-    });
-    updateFlights([]);
-    updateFlights(createMapIcons());
-    setMapLines()
-
-    return () => {
-      updateFlights([])
-      updateFlightPaths([])
-    }
-
-  }, [mapsLoaded]);
 
   const createMapIcons = () => {
     let components = flightData.flatMap(flight => [
@@ -92,28 +60,23 @@ const Map = props => {
     return components;
   };
 
-  const setMapLines = () => {
-    if (flightPaths.length > 0) {
-      flightPaths.map(flightPath => flightPath.setMap(null));
-    }
-
-    let new_flightPaths = flightData.map(flight => {
+  const setMapLines = (m, m2) => {
+    flightData.map(flight => {
       let flight_lines = [
         { lat: flight.originLatLng.lat, lng: flight.originLatLng.lng },
         { lat: flight.destinationLatLng.lat, lng: flight.destinationLatLng.lng }
       ];
 
-      return new maps.Polyline({
+      let f = new m.Polyline({
         path: flight_lines,
         geodesic: true,
         strokeColor: "#000",
         strokeOpacity: 1.0,
         strokeWeight: 1,
-        map: map
       });
-    });
 
-    updateFlightPaths(new_flightPaths);
+      f.setMap(m2)
+    });
   };
 
   return (
@@ -147,9 +110,9 @@ const Map = props => {
           center={ location.center }
           zoom={ location.zoom }
           yesIWantToUseGoogleMapApiInternals
-          onGoogleApiLoaded={ ({ map, maps }) => handleApiLoaded(map, maps) }
+          onGoogleApiLoaded={ ({ map, maps }) => { setMapLines(maps, map) } }
         >
-          { flights.length > 0 ? flights.map(flight => flight) : null }
+          { flightData.length > 0 ? createMapIcons() : null }
         </GoogleMapReact>
       </div>
       <div
