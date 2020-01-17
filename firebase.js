@@ -1,7 +1,7 @@
 import firebase from "firebase";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBbPtzvE19paEy_skkz8ter4sdIP2ZRWQI",
+  apiKey: `${process.env.GOOGLE_API_KEY}`,
   authDomain: "nonrev-tracker.firebaseapp.com",
   databaseURL: "https://nonrev-tracker.firebaseio.com",
   projectId: "nonrev-tracker",

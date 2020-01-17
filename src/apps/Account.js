@@ -77,7 +77,6 @@ const Account = props => {
             {Object.keys(accountData).map(item => {
               return (
                 <div key={item}>
-                  {console.log(item, accountData[item])}
                   {item} :: {accountData[item]}
                 </div>
               );

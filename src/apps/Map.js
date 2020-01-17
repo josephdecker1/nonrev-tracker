@@ -110,7 +110,7 @@ const Map = props => {
           center={ location.center }
           zoom={ location.zoom }
           yesIWantToUseGoogleMapApiInternals
-          onGoogleApiLoaded={ ({ map, maps }) => { console.log(map, maps); setMapLines(maps, map) } }
+          onGoogleApiLoaded={ ({ map, maps }) => { setMapLines(maps, map) } }
         >
           { flightData.length > 0 ? createMapIcons() : null }
         </GoogleMapReact>

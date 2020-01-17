@@ -8,20 +8,16 @@ import { colors } from "../app_css";
 export const AuthenticatedUser = props => {
   const { user, userRef, navWidth } = props;
   let history = useHistory();
-  // const [userData, updateUserData] = React.useState({});
+  const [flightData, updateFlightData] = React.useState([]);
 
-  // React.useEffect(() => {
-  //   userRef.get().then(doc => {
-  //     if (doc.exists) {
-  //       console.log(doc.data());
-  //       updateUserData(doc.data());
-  //       // return doc.data();
-  //     }
-  //   });
-  // }, [user]);
+  React.useEffect(() => {
+    userRef.get().then(doc => {
+      if (doc.exists) {
+        updateFlightData(flightData.concat(doc.data().flight_data))
+      }
+    });
+  }, [])
 
-  console.log("USER => " + JSON.stringify(user));
-  console.log("HISTORY -> " + JSON.stringify(history));
   return (
     <div
       css={css`
@@ -35,6 +31,7 @@ export const AuthenticatedUser = props => {
       <Content
         user={user}
         userRef={userRef}
+        flightData={ flightData }
         location={history.location.pathname}
         navWidth={navWidth}
       />
