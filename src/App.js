@@ -25,7 +25,6 @@ const App = () => {
     const script = document.createElement("script");
     script.async = true;
     script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.GOOGLE_API_KEY}`;
-    // script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyABRagWGdtpE--gDWZq8c2HG5q6kIh8ba0"
     // //For head
     document.head.appendChild(script);
   }, []);
