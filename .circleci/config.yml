@@ -48,7 +48,7 @@ jobs:
           command: echo $GOOGLE_MAPS_KEY
       - run:
           name: deploy Master
-          command: ./node_modules/.bin/firebase deploy --token=$FIREBASE_CI_TOKEN
+          command: ./node_modules/.bin/firebase deploy --token=$FIREBASE_CI_TOKEN --GOOGLE_API_KEY=$GOOGLE_MAPS_KEY
 
 workflows:
   version: 2
