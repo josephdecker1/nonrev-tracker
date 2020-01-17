@@ -3,6 +3,8 @@ jobs:
   build:
     docker:
       - image: node:10 # Where the build happens
+        environment:
+          GOOGLE_MAPS_KEY: $GOOGLE_MAPS_KEY
     working_directory: ~/app
     steps:
       - checkout # check out the code in the project directory
@@ -32,6 +34,8 @@ jobs:
   deploy:
     docker:
       - image: node:10 # Where the deploy happens
+        environment:
+          GOOGLE_MAPS_KEY: $GOOGLE_MAPS_KEY
     working_directory: ~/app
     steps:
       - attach_workspace:
