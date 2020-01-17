@@ -7,10 +7,9 @@ import { colors } from "./app_css";
 
 import { useAuth } from "./Auth";
 import { AuthenticatedUser } from "./containers/AuthenticatedUser";
-// import admin from "firebase-admin";
 import firebaseApp from "../firebase";
+import keys from "../keys";
 import { SideNavigation } from "./containers/SideNavigation";
-// import { Button, Header, Icon, Modal } from "semantic-ui-react";
 
 const App = () => {
   const { user, userRef } = useAuth(firebaseApp.auth());
@@ -24,7 +23,7 @@ const App = () => {
 
     const script = document.createElement("script");
     script.async = true;
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.GOOGLE_API_KEY}`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${keys.GOOGLE_API_KEY}`;
     // //For head
     document.head.appendChild(script);
   }, []);
@@ -45,15 +44,15 @@ const App = () => {
     if (user || getCurrentApp(history) == "home") {
       component = (
         <AuthenticatedUser
-          user={ user }
-          userRef={ userRef }
-          navWidth={ sideNavigationWidth }
+          user={user}
+          userRef={userRef}
+          navWidth={sideNavigationWidth}
         />
       );
     } else {
       component = (
         <div
-          css={ css`
+          css={css`
             background-color: ${colors.white};
             width: calc(100vw - ${sideNavigationWidth}px);
             margin-left: ${sideNavigationWidth}px;
@@ -68,11 +67,11 @@ const App = () => {
   };
 
   return (
-    <Suspense fallback={ <Loader /> }>
+    <Suspense fallback={<Loader />}>
       <div>
-        {/* The active app will determine what is displayed in the main content area */ }
-        <SideNavigation user={ user } activeApp={ getCurrentApp(history) } />
-        { renderApp(user) }
+        {/* The active app will determine what is displayed in the main content area */}
+        <SideNavigation user={user} activeApp={getCurrentApp(history)} />
+        {renderApp(user)}
       </div>
     </Suspense>
   );
