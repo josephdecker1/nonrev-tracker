@@ -46,9 +46,6 @@ jobs:
           name: install firebase tools
           command: npm install --save-dev firebase-tools
       - run:
-          name: Echo env var to see if it's actualy there
-          command: echo $GOOGLE_MAPS_KEY
-      - run:
           name: deploy Master
           command: ./node_modules/.bin/firebase deploy --token=$FIREBASE_CI_TOKEN
 
