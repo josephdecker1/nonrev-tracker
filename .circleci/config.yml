@@ -15,8 +15,8 @@ jobs:
           name: substitute key template from env vars
           command: sed -i "s/google_api_key/$GOOGLE_MAPS_KEY/g" firebase.js
       - run:
-          name: cat the keys file
-          command: cat keys.js
+          name: cat the firebase file
+          command: cat firebase.js
       - run:
           name: install firebase tools
           command: npm install --save-dev firebase-tools
