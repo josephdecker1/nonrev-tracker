@@ -11,12 +11,12 @@ export const AuthenticatedUser = props => {
   const [flightData, updateFlightData] = React.useState([]);
 
   React.useEffect(() => {
-    userRef.get().then(doc => {
+    userRef?.get().then(doc => {
       if (doc.exists) {
-        updateFlightData(flightData.concat(doc.data().flight_data))
+        updateFlightData(flightData.concat(doc.data().flight_data));
       }
     });
-  }, [])
+  }, []);
 
   return (
     <div
@@ -31,7 +31,7 @@ export const AuthenticatedUser = props => {
       <Content
         user={user}
         userRef={userRef}
-        flightData={ flightData }
+        flightData={flightData}
         location={history.location.pathname}
         navWidth={navWidth}
       />
