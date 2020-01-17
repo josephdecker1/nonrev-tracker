@@ -5,7 +5,6 @@ jobs:
       - image: node:10 # Where the build happens
         environment:
           GOOGLE_MAPS_KEY: $GOOGLE_MAPS_KEY
-          FILE_NAME: keys.js
     working_directory: ~/app
     steps:
       - checkout # check out the code in the project directory
@@ -14,10 +13,13 @@ jobs:
           command: npm install
       - run:
           name: copy env vars to keys file
-          command: cp keys.js.template $FILE_NAME
+          command: cp keys.js.template keys.js
       - run:
           name: substitute key template from env vars
-          command: sed -i 's/google_api_key/$GOOGLE_MAPS_KEY/g' $FILE_NAME
+          command: sed -i 's/google_api_key/$GOOGLE_MAPS_KEY/g' keys.js
+      - run:
+          name: cat the keys file
+          command: cat keys.js
       - run:
           name: install firebase tools
           command: npm install --save-dev firebase-tools
