@@ -3,6 +3,9 @@ import { uuid } from "uuidv4";
 import { css } from "@emotion/core";
 import { Table, } from "semantic-ui-react";
 import { colors } from "../app_css";
+import firebaseApp from "../../firebase";
+
+const db = firebaseApp.firestore();
 
 const UserData = props => {
   const { user, userRef } = props;
@@ -12,7 +15,7 @@ const UserData = props => {
   const [flights_uploaded, updateFlightsUploaded] = React.useState(false);
 
   React.useEffect(() => {
-    userRef.get().then(doc => {
+    db.collection("users").doc(user.uid).get().then(doc => {
       if (doc.exists) {
         updateUserData(doc.data());
         updateFlight_Data(doc.data().flight_data);

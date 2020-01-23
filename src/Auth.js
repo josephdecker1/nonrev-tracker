@@ -7,35 +7,33 @@ export const useAuth = auth => {
   const [authState, setState] = React.useState({
     isLoading: true,
     user: null,
-    userRef: null
+    // userRef: null
   });
 
-  const setDatabaseRef = authState => {
-    let userRef = null;
+  // const setDatabaseRef = authState => {
+  //   let userRef = null;
 
-    if (authState) {
-      userRef = db.collection("users").doc(authState.uid);
-      userRef.get().then(doc => {
-        if (doc.exists) {
-          //don't do anything, it exists!
-        } else {
-          //doc doesn't exist yet, so we're gonna make one for the user
-          userRef.set({
-            created: new Date(),
-            userName: authState.displayName,
-          });
-        }
-      });
-    }
-    return userRef;
-  };
+  //   if (authState) {
+  //     userRef = db.collection("users").doc(authState.uid);
+  //     userRef.get().then(doc => {
+  //       if (doc.exists) {
+  //         //don't do anything, it exists!
+  //         console.log("The user exists!")
+  //       } else {
+  //         //doc doesn't exist yet, so we're gonna make one for the user
+  //         console.log("Don't do anything!!")
+  //       }
+  //     });
+  //   }
+  //   return userRef;
+  // };
 
   React.useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(authState =>
       setState({
         isLoading: false,
         user: authState,
-        userRef: setDatabaseRef(authState)
+        // userRef: setDatabaseRef(authState)
       })
     );
     return unsubscribe;
@@ -99,12 +97,12 @@ export const emailPasswordLogin = (username, password) => {
     });
 };
 
-export const createEmailPasswordUser = async (username, password, promiseCallback) => {
+export const createEmailPasswordUser = async (username, password, newUserData) => {
   firebaseApp
     .auth()
     .createUserWithEmailAndPassword(username, password)
     .then(function (user) {
-      promiseCallback(setDatabaseReference(user.user))
+      setDatabaseReference(user.user, newUserData)
     })
     .catch(function (error) {
       // Handle Errors here.
@@ -120,20 +118,21 @@ export const logout = () => {
   firebaseApp.auth().signOut();
 };
 
-export const setDatabaseReference = user => {
+export const setDatabaseReference = (user, newUserData) => {
   let userRef = null;
+
+  console.log(user.uid)
+  console.log(newUserData)
 
   if (user) {
     userRef = db.collection("users").doc(user.uid);
     userRef.get().then(doc => {
       if (doc.exists) {
         //don't do anything, it exists!
+        userRef.set({...newUserData})
       } else {
         //doc doesn't exist yet, so we're gonna make one for the user
-        userRef.set({
-          created: new Date(),
-          userName: user.displayName,
-        });
+        userRef.set({...newUserData});
       }
     });
   }

@@ -3,6 +3,10 @@ import { Icon, Table, Container, Button, Form } from "semantic-ui-react";
 import Loader from "../components/loader";
 import Editable from "../components/Editable";
 
+import firebaseApp from "../../firebase";
+
+const db = firebaseApp.firestore();
+
 const Account = props => {
   const { user, userRef } = props;
   const [userData, updateUserData] = React.useState({});
@@ -24,7 +28,7 @@ const Account = props => {
   };
 
   React.useEffect(() => {
-    userRef.get().then(doc => {
+    db.collection("users").doc(user.uid).get().then(doc => {
       if (doc.exists) {
         updateAccountData({
           ...accountData,

@@ -16,10 +16,13 @@ import axios from 'axios';
 import isEmail from 'validator/es/lib/isEmail';
 import isEqual from 'validator/es/lib/equals'
 
-import { createEmailPasswordUser, setDatabaseReference } from '../Auth'
-import { setLatLgnAirportsForFlights, renderFlightData } from '../utils/flight_data'
 
 import firebaseApp from "../../firebase";
+const db = firebaseApp.firestore();
+
+import { createEmailPasswordUser, setDatabaseReference } from '../Auth'
+import { setLatLgnAirportsForFlights, renderFlightData, createMapLines } from '../utils/flight_data'
+
 
 const progressButtonDisabled = (...args) => {
 
@@ -208,7 +211,7 @@ const step2 = (props) => {
 }
 
 const step3 = (props) => {
-  const { swausername, updateSWAUserName, swapassword, updateSWAPassword, swaFlightData, updateSwaFlightData, loading, updateLoading, UpdateCurrentStep, currentStep, uniqueAirports, milesTravelled, updateUniqueAirports, updateMilesTravelled } = { ...props }
+  const { google, swausername, updateSWAUserName, swapassword, updateSWAPassword, swaFlightData, updateSwaFlightData, loading, updateLoading, UpdateCurrentStep, currentStep, uniqueAirports, milesTravelled, updateUniqueAirports, updateMilesTravelled } = { ...props }
 
   const fetchFlightData = () => {
     updateLoading(true);
@@ -222,9 +225,11 @@ const step3 = (props) => {
       }
     }).then((response) => {
       const { updatedData, uniqueAirports, milesTravelled } = setLatLgnAirportsForFlights(response.data)
+      const flightDataWithEncodedPaths = createMapLines(updatedData, google.maps, google.maps.geometry.encoding.encodePath)
+
       updateUniqueAirports(uniqueAirports);
       updateMilesTravelled(milesTravelled);
-      updateSwaFlightData(updatedData);
+      updateSwaFlightData(flightDataWithEncodedPaths);
       updateLoading(false);
       console.log(response);
     });
@@ -302,18 +307,15 @@ const step4 = (props) => {
 
   const { firstName, lastName, department, jobTitle, email, password, swaFlightData, UpdateCurrentStep, currentStep, uniqueAirports, milesTravelled } = { ...props }
 
-  const promiseCallback = (userRef) => {
-    console.log("Doing stuff");
-    userRef.set({
-      firstName,
-      lastName,
-      department,
-      jobTitle,
-      email,
-      flight_data: swaFlightData,
-      uniqueAirports,
-      totalDistanceTravelled: milesTravelled
-    })
+  const newUserData = {
+    firstName: firstName,
+    lastName: lastName,
+    department: department,
+    jobTitle: jobTitle,
+    email: email,
+    flight_data: swaFlightData,
+    uniqueAirports: uniqueAirports,
+    totalDistanceTravelled: milesTravelled
   }
 
   return <div>
@@ -333,7 +335,7 @@ const step4 = (props) => {
         size="large"
         name="submit"
         onClick={ () => {
-          createEmailPasswordUser(email, password, promiseCallback)
+          createEmailPasswordUser(email, password, newUserData)
         } }
       >
         Create Account
@@ -367,25 +369,28 @@ const step4 = (props) => {
 
 const AccountCreation = (props) => {
 
-  const [currentStep, UpdateCurrentStep] = React.useState(1);
+  const [currentStep, UpdateCurrentStep] = React.useState(3);
 
-  const [firstName, updateFirstName] = React.useState("");
-  const [lastName, updateLastName] = React.useState("");
+  const [firstName, updateFirstName] = React.useState("Joseph");
+  const [lastName, updateLastName] = React.useState("Decker");
   const [department, updateDepartment] = React.useState("");
   const [jobTitle, updateJobTitle] = React.useState("");
 
-  const [email, updateEmail] = React.useState("");
+  const [email, updateEmail] = React.useState("joseph.decker@wnco.com");
   const [validEmail, updateValidEmail] = React.useState(false)
-  const [password, updatePassword] = React.useState("");
+  const [password, updatePassword] = React.useState("EggHead!35");
   const [validPassword, updateValidPassword] = React.useState("")
 
   const [swausername, updateSWAUserName] = React.useState("");
   const [swapassword, updateSWAPassword] = React.useState("");
   const [swaFlightData, updateSwaFlightData] = React.useState(null);
+  const [flightLines, updateFlightLines] = React.useState(null);
   const [loading, updateLoading] = React.useState(false);
 
   const [uniqueAirports, updateUniqueAirports] = React.useState([]);
   const [milesTravelled, updateMilesTravelled] = React.useState(0)
+
+  const google = window.google
 
 
   const checkPassword = (str) => {
@@ -402,11 +407,11 @@ const AccountCreation = (props) => {
   }
 
   const step3props = {
-    swausername, updateSWAUserName, swapassword, updateSWAPassword, swaFlightData, updateSwaFlightData, loading, updateLoading, UpdateCurrentStep, currentStep, uniqueAirports, milesTravelled, updateUniqueAirports, updateMilesTravelled
+    google, flightLines, updateFlightLines, swausername, updateSWAUserName, swapassword, updateSWAPassword, swaFlightData, updateSwaFlightData, loading, updateLoading, UpdateCurrentStep, currentStep, uniqueAirports, milesTravelled, updateUniqueAirports, updateMilesTravelled
   }
 
   const step4props = {
-    firstName, lastName, department, jobTitle, email, password, swaFlightData, uniqueAirports, milesTravelled, UpdateCurrentStep, currentStep
+    flightLines, firstName, lastName, department, jobTitle, email, password, swaFlightData, uniqueAirports, milesTravelled, UpdateCurrentStep, currentStep
   }
 
 

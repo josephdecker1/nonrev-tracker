@@ -20,7 +20,7 @@ const renderContent = (user, location, userRef, navWidth, flightData) => {
               padding: 0px;
             `}
           >
-            <Map userRef={ userRef } navWidth={ navWidth } flightData={ flightData} />
+            <Map user={ user } navWidth={ navWidth } />
           </div>
         </>
       );

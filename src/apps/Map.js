@@ -10,6 +10,11 @@ import { MdAirplanemodeActive } from "react-icons/md";
 import { css } from "@emotion/core";
 import { mapMarkerStyle, iconStyle, colors } from "../app_css";
 
+import firebaseApp from "../../firebase";
+
+const db = firebaseApp.firestore();
+
+
 const MapIcon = () => (
   <div
     css={ css`
@@ -37,8 +42,32 @@ const Map = props => {
     navWidth,
     uniqueAirports,
     totalDistanceTravelled,
-    flightData
+    flightData,
+    center,
+    zoom,
+    setMapLines,
+    setMapIcons,
+    user
   } = props;
+
+  const maps = window.google.maps;
+  const mapRef = React.useRef(null)
+
+  useEffect(() => {
+
+    const map = new maps.Map(document.getElementById("google-map-custom"), {
+      center: center,
+      zoom: zoom,
+      disableDefaultUI: true, // a way to quickly hide all controls
+      mapTypeControl: false,
+      scaleControl: false,
+      zoomControl: true,
+    })
+
+    setMapLines(flightData, map)
+    setMapIcons(flightData, map)
+  
+  }, [flightData])
 
   useEffect(() => {
     updateLocation({ center: props.center, zoom: props.zoom });
@@ -60,24 +89,11 @@ const Map = props => {
     return components;
   };
 
-  const setMapLines = (m, m2) => {
-    flightData.map(flight => {
-      let flight_lines = [
-        { lat: flight.originLatLng.lat, lng: flight.originLatLng.lng },
-        { lat: flight.destinationLatLng.lat, lng: flight.destinationLatLng.lng }
-      ];
+  // const setMapLines = (m) => {
 
-      let f = new m.Polyline({
-        path: flight_lines,
-        geodesic: true,
-        strokeColor: "#000",
-        strokeOpacity: 1.0,
-        strokeWeight: 1,
-      });
-
-      f.setMap(m2)
-    });
-  };
+  //   console.log(flightLines)
+    
+  // };
 
   return (
     <div style={ { height: "100%", width: "100%" } }>
@@ -105,15 +121,15 @@ const Map = props => {
           zIndex: "1"
         } }
       >
-        <GoogleMapReact
-          bootstrapURLKeys={ { key: "AIzaSyBbPtzvE19paEy_skkz8ter4sdIP2ZRWQI" } }
+        <div
           center={ location.center }
           zoom={ location.zoom }
-          yesIWantToUseGoogleMapApiInternals
-          onGoogleApiLoaded={ ({ map, maps }) => { setMapLines(maps, map) } }
+          ref={mapRef}
+          css={css`width: 100%; height: 100%;`}
+          id="google-map-custom"
         >
-          { flightData.length > 0 ? createMapIcons() : null }
-        </GoogleMapReact>
+          {/* { flightData.length > 0 ? createMapIcons() : null } */}
+        </div>
       </div>
       <div
         style={ {

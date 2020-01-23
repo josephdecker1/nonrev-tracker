@@ -23,7 +23,7 @@ const App = () => {
 
     const script = document.createElement("script");
     script.async = true;
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${firebaseConfig.apiKey}`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${firebaseConfig.apiKey}&libraries=geometry`;
     // //For head
     document.head.appendChild(script);
   }, []);

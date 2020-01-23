@@ -100,3 +100,25 @@ export const renderFlightData = data => {
     </Table>
   );
 };
+
+export const createMapLines = (flightData, maps, endcodePath) => {
+  const flightDataWithEncodedPaths = flightData.map(flight => {
+    let flight_lines = [
+      { lat: flight.originLatLng.lat, lng: flight.originLatLng.lng },
+      { lat: flight.destinationLatLng.lat, lng: flight.destinationLatLng.lng }
+    ];
+
+    let f = new maps.Polyline({
+      path: flight_lines,
+      geodesic: true,
+      strokeColor: "#000",
+      strokeOpacity: 1.0,
+      strokeWeight: 1,
+    });
+
+    return Object.assign({}, flight, {flightPath: endcodePath(f.getPath())})
+
+  });
+
+  return flightDataWithEncodedPaths;
+}
