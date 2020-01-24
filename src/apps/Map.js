@@ -89,12 +89,6 @@ const Map = props => {
     return components;
   };
 
-  // const setMapLines = (m) => {
-
-  //   console.log(flightLines)
-    
-  // };
-
   return (
     <div style={ { height: "100%", width: "100%" } }>
       <div
@@ -128,7 +122,6 @@ const Map = props => {
           css={css`width: 100%; height: 100%;`}
           id="google-map-custom"
         >
-          {/* { flightData.length > 0 ? createMapIcons() : null } */}
         </div>
       </div>
       <div

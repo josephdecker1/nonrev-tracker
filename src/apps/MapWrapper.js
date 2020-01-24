@@ -3,12 +3,12 @@ import Map from "./Map";
 import { css } from "@emotion/core";
 
 import firebaseApp from "../../firebase";
-import image from '../../plane.png'
 
 const db = firebaseApp.firestore();
 const maps = window.google.maps;
 
 const MapWrapper = props => {
+
   const { user } = props;
   const [mapCenterBounds, updateMapCenterBounds] = React.useState({
     lat: 32.7766642,
@@ -28,8 +28,8 @@ const MapWrapper = props => {
       let line = new maps.Polyline({
         path: maps.geometry.encoding.decodePath(data[i].flightPath),
         strokeColor: '#000000',
-        strokeOpacity: 1.0,
-        strokeWeight: 2.2,
+        strokeOpacity: 1.2,
+        strokeWeight: 1.0,
         zIndex: 3
       })
 
@@ -42,13 +42,23 @@ const MapWrapper = props => {
       var marker = new maps.Marker({
         position: new maps.LatLng(data[i].originLatLng.lat, data[i].originLatLng.lng),
         map: map,
-        icon: image
+        icon: {
+          anchor: new google.maps.Point(14, 15),
+          scaledSize: new google.maps.Size(30, 30),
+          url: 'data:image/svg+xml;utf-8, \
+      <svg class="icon" style="width: 1em; height: 1em;vertical-align: middle;fill: darkblue;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M896 672l0-80L576 384 576 158.4c0-35.366-29.64-62.4-64-62.4-34.358 0-64 27.036-64 62.4L448 384 128 592l0 80 320-96 0 227.204-96 62.398L352 928l160-32 160 32 0-62.398-96-62.398L576 576 896 672z" /></svg>'
+        }
       })
 
       var marker2 = new maps.Marker({
         position: new maps.LatLng(data[i].destinationLatLng.lat, data[i].destinationLatLng.lng),
         map: map,
-        icon: image
+        icon: {
+          anchor: new google.maps.Point(14, 15),
+          scaledSize: new google.maps.Size(30, 30),
+          url: 'data:image/svg+xml;utf-8, \
+      <svg class="icon" style="width: 1em; height: 1em;vertical-align: middle;fill:  darkblue;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M896 672l0-80L576 384 576 158.4c0-35.366-29.64-62.4-64-62.4-34.358 0-64 27.036-64 62.4L448 384 128 592l0 80 320-96 0 227.204-96 62.398L352 928l160-32 160 32 0-62.398-96-62.398L576 576 896 672z" /></svg>'
+        }
       })
     }
   }
@@ -56,7 +66,6 @@ const MapWrapper = props => {
   React.useEffect(() => {
     db.collection("users").doc(user.uid).get().then(doc => {
       if (doc.exists) {
-        console.log(doc.data().flight_data)
         updateFlightData(doc.data().flight_data)
         updateTotalDistanceTravelled(doc.data().totalDistanceTravelled);
         updateUniqueAirports(doc.data().uniqueAirports);
