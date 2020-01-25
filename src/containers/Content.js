@@ -14,32 +14,40 @@ const renderContent = (user, location, userRef, navWidth, flightData) => {
       return (
         <>
           <div
-            css={ css`
+            css={css`
               width: 100%;
               height: 100vh;
               padding: 0px;
             `}
           >
-            <Map userRef={ userRef } navWidth={ navWidth } flightData={ flightData} />
+            <Map user={user} navWidth={navWidth} />
           </div>
         </>
       );
     case "/account":
-      return <Account user={ user } userRef={ userRef } />;
+      return <Account user={user} userRef={userRef} />;
     case "/userdata":
-      return <UserData user={ user } userRef={ userRef } />;
+      return <UserData user={user} userRef={userRef} />;
     default:
-      return <Home user={ user } userRef={ userRef } css={ css`width: calc(100% - ${navWidth}px);` } />;
+      return (
+        <Home
+          user={user}
+          userRef={userRef}
+          css={css`
+            width: calc(100% - ${navWidth}px);
+          `}
+        />
+      );
   }
 };
 
 const Content = props => {
   const { user, userRef, location, navWidth, flightData } = props;
-  
+
   return (
     <div>
-      <Suspense fallback={ <Loader /> }>
-        { renderContent(user, location, userRef, navWidth, flightData) }
+      <Suspense fallback={<Loader />}>
+        {renderContent(user, location, userRef, navWidth, flightData)}
       </Suspense>
     </div>
   );

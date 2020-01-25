@@ -8,15 +8,6 @@ import { colors } from "../app_css";
 export const AuthenticatedUser = props => {
   const { user, userRef, navWidth } = props;
   let history = useHistory();
-  const [flightData, updateFlightData] = React.useState([]);
-
-  React.useEffect(() => {
-    userRef?.get().then(doc => {
-      if (doc.exists) {
-        updateFlightData(flightData.concat(doc.data().flight_data));
-      }
-    });
-  }, []);
 
   return (
     <div
@@ -30,8 +21,6 @@ export const AuthenticatedUser = props => {
     >
       <Content
         user={user}
-        userRef={userRef}
-        flightData={flightData}
         location={history.location.pathname}
         navWidth={navWidth}
       />
