@@ -14,15 +14,14 @@ import firebaseApp from "../../firebase";
 
 const db = firebaseApp.firestore();
 
-
 const MapIcon = () => (
   <div
-    css={ css`
+    css={css`
       ${mapMarkerStyle}
     `}
   >
     <MdAirplanemodeActive
-      css={ css`
+      css={css`
         ${iconStyle}
       `}
     />
@@ -51,23 +50,21 @@ const Map = props => {
   } = props;
 
   const maps = window.google.maps;
-  const mapRef = React.useRef(null)
+  const mapRef = React.useRef(null);
 
   useEffect(() => {
-
     const map = new maps.Map(document.getElementById("google-map-custom"), {
       center: center,
       zoom: zoom,
       disableDefaultUI: true, // a way to quickly hide all controls
       mapTypeControl: false,
       scaleControl: false,
-      zoomControl: true,
-    })
+      zoomControl: true
+    });
 
-    setMapLines(flightData, map)
-    setMapIcons(flightData, map)
-  
-  }, [flightData])
+    setMapLines(flightData, map);
+    setMapIcons(flightData, map);
+  }, [flightData]);
 
   useEffect(() => {
     updateLocation({ center: props.center, zoom: props.zoom });
@@ -76,23 +73,23 @@ const Map = props => {
   const createMapIcons = () => {
     let components = flightData.flatMap(flight => [
       <MapIcon
-        key={ `${flight.PNR}-${uuid()}` }
-        lat={ flight.destinationLatLng.lat }
-        lng={ flight.destinationLatLng.lng }
+        key={`${flight.PNR}-${uuid()}`}
+        lat={flight.destinationLatLng.lat}
+        lng={flight.destinationLatLng.lng}
       />,
       <MapIcon
-        key={ `${flight.PNR}-${uuid()}` }
-        lat={ flight.originLatLng.lat }
-        lng={ flight.originLatLng.lng }
+        key={`${flight.PNR}-${uuid()}`}
+        lat={flight.originLatLng.lat}
+        lng={flight.originLatLng.lng}
       />
     ]);
     return components;
   };
 
   return (
-    <div style={ { height: "100%", width: "100%" } }>
+    <div style={{ height: "100%", width: "100%" }}>
       <div
-        css={ css`
+        css={css`
           position: absolute;
           top: 7px;
           left: calc(${navWidth}px + 7px);
@@ -108,62 +105,55 @@ const Map = props => {
         />
       </div>
       <div
-        style={ {
+        style={{
           height: "80%",
           width: "100%",
           position: "relative",
           zIndex: "1"
-        } }
+        }}
       >
         <div
-          center={ location.center }
-          zoom={ location.zoom }
+          center={location.center}
+          zoom={location.zoom}
           ref={mapRef}
-          css={css`width: 100%; height: 100%;`}
+          css={css`
+            width: 100%;
+            height: 100%;
+          `}
           id="google-map-custom"
-        >
-        </div>
+        ></div>
       </div>
       <div
-        style={ {
+        style={{
           padding: "10px",
           height: "20%",
           width: "100%",
           backgroundColor: colors.yellow
-        } }
+        }}
       >
-        <Statistic.Group widths="four">
+        <Statistic.Group widths="three">
           <Statistic>
             <Statistic.Value>
-              { uniqueAirports ? coverter.toWords(uniqueAirports.length) : null }
+              {uniqueAirports ? coverter.toWords(uniqueAirports.length) : null}
             </Statistic.Value>
             <Statistic.Label>Unique Airports</Statistic.Label>
           </Statistic>
 
           <Statistic>
             <Statistic.Value>
-              { flightData ? flightData.length : null } <Icon name="plane" />
+              {flightData ? flightData.length : null} <Icon name="plane" />
             </Statistic.Value>
             <Statistic.Label>Total Flights</Statistic.Label>
           </Statistic>
 
           <Statistic>
             <Statistic.Value>
-              { totalDistanceTravelled ? totalDistanceTravelled.toLocaleString() : null }
+              {totalDistanceTravelled
+                ? totalDistanceTravelled.toLocaleString()
+                : null}
               <Icon name="flag checkered" />
             </Statistic.Value>
             <Statistic.Label>Miles Travelled</Statistic.Label>
-          </Statistic>
-
-          <Statistic>
-            <Statistic.Value>
-              <Image
-                src="https://react.semantic-ui.com/images/avatar/small/joe.jpg"
-                className="circular inline"
-              />
-              1
-            </Statistic.Value>
-            <Statistic.Label>Random Statistic</Statistic.Label>
           </Statistic>
         </Statistic.Group>
       </div>
