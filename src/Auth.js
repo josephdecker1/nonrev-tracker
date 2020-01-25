@@ -6,34 +6,14 @@ const db = firebaseApp.firestore();
 export const useAuth = auth => {
   const [authState, setState] = React.useState({
     isLoading: true,
-    user: null,
-    // userRef: null
+    user: null
   });
-
-  // const setDatabaseRef = authState => {
-  //   let userRef = null;
-
-  //   if (authState) {
-  //     userRef = db.collection("users").doc(authState.uid);
-  //     userRef.get().then(doc => {
-  //       if (doc.exists) {
-  //         //don't do anything, it exists!
-  //         console.log("The user exists!")
-  //       } else {
-  //         //doc doesn't exist yet, so we're gonna make one for the user
-  //         console.log("Don't do anything!!")
-  //       }
-  //     });
-  //   }
-  //   return userRef;
-  // };
 
   React.useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(authState =>
       setState({
         isLoading: false,
-        user: authState,
-        // userRef: setDatabaseRef(authState)
+        user: authState
       })
     );
     return unsubscribe;
@@ -45,7 +25,7 @@ export const googleLogin = () => {
   firebaseApp
     .auth()
     .signInWithPopup(providers.Google)
-    .then(function (result) {
+    .then(function(result) {
       // This gives you a Google Access Token.
       let token = result.credential.accessToken;
       // The signed-in user info.
@@ -59,7 +39,7 @@ export const facebookLogin = () => {
   firebaseApp
     .auth()
     .signInWithPopup(providers.Facebook)
-    .then(function (result) {
+    .then(function(result) {
       // This gives you a Google Access Token.
       let token = result.credential.accessToken;
       // The signed-in user info.
@@ -73,7 +53,7 @@ export const twitterLogin = () => {
   firebaseApp
     .auth()
     .signInWithPopup(providers.Twitter)
-    .then(function (result) {
+    .then(function(result) {
       // This gives you a Google Access Token.
       let token = result.credential.accessToken;
       let secret = result.credential.secret;
@@ -88,7 +68,7 @@ export const emailPasswordLogin = (username, password) => {
   return firebaseApp
     .auth()
     .signInWithEmailAndPassword(username, password)
-    .catch(function (error) {
+    .catch(function(error) {
       // Handle Errors here.
       let errorCode = error.code;
       let errorMessage = error.message;
@@ -97,14 +77,18 @@ export const emailPasswordLogin = (username, password) => {
     });
 };
 
-export const createEmailPasswordUser = async (username, password, newUserData) => {
+export const createEmailPasswordUser = async (
+  username,
+  password,
+  newUserData
+) => {
   firebaseApp
     .auth()
     .createUserWithEmailAndPassword(username, password)
-    .then(function (user) {
-      setDatabaseReference(user.user, newUserData)
+    .then(function(user) {
+      setDatabaseReference(user.user, newUserData);
     })
-    .catch(function (error) {
+    .catch(function(error) {
       // Handle Errors here.
 
       let errorCode = error.code;
@@ -121,18 +105,18 @@ export const logout = () => {
 export const setDatabaseReference = (user, newUserData) => {
   let userRef = null;
 
-  console.log(user.uid)
-  console.log(newUserData)
+  console.log(user.uid);
+  console.log(newUserData);
 
   if (user) {
     userRef = db.collection("users").doc(user.uid);
     userRef.get().then(doc => {
       if (doc.exists) {
         //don't do anything, it exists!
-        userRef.set({...newUserData})
+        userRef.set({ ...newUserData });
       } else {
         //doc doesn't exist yet, so we're gonna make one for the user
-        userRef.set({...newUserData});
+        userRef.set({ ...newUserData });
       }
     });
   }
