@@ -24,8 +24,18 @@ const MapWrapper = props => {
 
   const decodeFlightPathsAndAddToMap = (data, map) => {
     for (let i = 0; i < data.length; i++) {
+      let path = data[i].flightPath
+        ? maps.geometry.encoding.decodePath(data[i].flightPath)
+        : [
+            { lat: data[i].originLatLng.lat, lng: data[i].originLatLng.lng },
+            {
+              lat: data[i].destinationLatLng.lat,
+              lng: data[i].destinationLatLng.lng
+            }
+          ];
+
       let line = new maps.Polyline({
-        path: maps.geometry.encoding.decodePath(data[i].flightPath),
+        path: path,
         strokeColor: "#000000",
         strokeOpacity: 1.2,
         strokeWeight: 1.0,
