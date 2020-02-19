@@ -369,16 +369,16 @@ const step4 = (props) => {
 
 const AccountCreation = (props) => {
 
-  const [currentStep, UpdateCurrentStep] = React.useState(3);
+  const [currentStep, UpdateCurrentStep] = React.useState(1);
 
-  const [firstName, updateFirstName] = React.useState("Joseph");
-  const [lastName, updateLastName] = React.useState("Decker");
+  const [firstName, updateFirstName] = React.useState("");
+  const [lastName, updateLastName] = React.useState("");
   const [department, updateDepartment] = React.useState("");
   const [jobTitle, updateJobTitle] = React.useState("");
 
-  const [email, updateEmail] = React.useState("joseph.decker@wnco.com");
+  const [email, updateEmail] = React.useState("");
   const [validEmail, updateValidEmail] = React.useState(false)
-  const [password, updatePassword] = React.useState("EggHead!35");
+  const [password, updatePassword] = React.useState("");
   const [validPassword, updateValidPassword] = React.useState("")
 
   const [swausername, updateSWAUserName] = React.useState("");

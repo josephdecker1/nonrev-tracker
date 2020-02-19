@@ -103,7 +103,7 @@ const MapWrapper = props => {
 
   return (
     <div
-      css={css`
+      css={ css`
         width: 100%;
         height: 100vh;
         padding: 0px;

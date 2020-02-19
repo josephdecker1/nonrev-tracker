@@ -33,18 +33,18 @@ export const SideNavigation = props => {
     <div>
       <Sidebar
         id="SideNavigation"
-        as={Menu}
+        as={ Menu }
         direction="left"
         inverted
         vertical
-        visible={true}
+        visible={ true }
         width="thin"
       >
         <Menu.Item
-          as={Link}
+          as={ Link }
           to="/"
-          active={activeApp === "home"}
-          color={"green"}
+          active={ activeApp === "home" }
+          color={ "green" }
         >
           <Icon name="home" />
           Home
@@ -65,18 +65,18 @@ export const SideNavigation = props => {
             <Menu.Item
               as={Link}
               to="/account"
-              active={activeApp === "account"}
-              color={"green"}
+              active={ activeApp === "account" }
+              color={ "green" }
             >
               <Icon name="cog" />
               Account
             </Menu.Item>
 
             <Menu.Item
-              as={Link}
+              as={ Link }
               to="/userdata"
-              active={activeApp === "userdata"}
-              color={"green"}
+              active={ activeApp === "userdata" }
+              color={ "green" }
             >
               <Icon name="database" />
               User Data
@@ -87,27 +87,27 @@ export const SideNavigation = props => {
               Log Out
             </Menu.Item>
           </>
-        )}
+        ) }
 
-        {!user && (
+        { !user && (
           <Menu.Item
             as="a"
-            onClick={() => {
+            onClick={ () => {
               console.log("I was clicked");
               updateModalState(!modalState);
-            }}
+            } }
           >
             <Icon name="angle right" />
             Login
           </Menu.Item>
-        )}
+        ) }
       </Sidebar>
-      {modalState ? (
+      { modalState ? (
         <LoginModal
-          modalState={modalState}
-          updateModalState={updateModalState}
+          modalState={ modalState }
+          updateModalState={ updateModalState }
         />
-      ) : null}
+      ) : null }
     </div>
   );
 };

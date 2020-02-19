@@ -14,7 +14,7 @@ const renderContent = (user, location, userRef, navWidth, flightData) => {
       return (
         <>
           <div
-            css={css`
+            css={ css`
               width: 100%;
               height: 100vh;
               padding: 0px;
@@ -25,9 +25,9 @@ const renderContent = (user, location, userRef, navWidth, flightData) => {
         </>
       );
     case "/account":
-      return <Account user={user} userRef={userRef} />;
+      return <Account user={ user } userRef={ userRef } />;
     case "/userdata":
-      return <UserData user={user} userRef={userRef} />;
+      return <UserData user={ user } userRef={ userRef } />;
     default:
       return (
         <Home

@@ -16,12 +16,12 @@ const db = firebaseApp.firestore();
 
 const MapIcon = () => (
   <div
-    css={css`
+    css={ css`
       ${mapMarkerStyle}
     `}
   >
     <MdAirplanemodeActive
-      css={css`
+      css={ css`
         ${iconStyle}
       `}
     />
@@ -29,6 +29,7 @@ const MapIcon = () => (
 );
 
 const Map = props => {
+  const { userRef } = props;
   const [location, updateLocation] = useState({
     center: {
       lat: 32.7766642,
@@ -73,23 +74,23 @@ const Map = props => {
   const createMapIcons = () => {
     let components = flightData.flatMap(flight => [
       <MapIcon
-        key={`${flight.PNR}-${uuid()}`}
-        lat={flight.destinationLatLng.lat}
-        lng={flight.destinationLatLng.lng}
+        key={ `${flight.PNR}-${uuid()}` }
+        lat={ flight.destinationLatLng.lat }
+        lng={ flight.destinationLatLng.lng }
       />,
       <MapIcon
-        key={`${flight.PNR}-${uuid()}`}
-        lat={flight.originLatLng.lat}
-        lng={flight.originLatLng.lng}
+        key={ `${flight.PNR}-${uuid()}` }
+        lat={ flight.originLatLng.lat }
+        lng={ flight.originLatLng.lng }
       />
     ]);
     return components;
   };
 
   return (
-    <div style={{ height: "100%", width: "100%" }}>
+    <div style={ { height: "100%", width: "100%" } }>
       <div
-        css={css`
+        css={ css`
           position: absolute;
           top: 7px;
           left: calc(${navWidth}px + 7px);
@@ -105,12 +106,12 @@ const Map = props => {
         />
       </div>
       <div
-        style={{
+        style={ {
           height: "80%",
           width: "100%",
           position: "relative",
           zIndex: "1"
-        }}
+        } }
       >
         <div
           center={location.center}
@@ -124,12 +125,12 @@ const Map = props => {
         ></div>
       </div>
       <div
-        style={{
+        style={ {
           padding: "10px",
           height: "20%",
           width: "100%",
           backgroundColor: colors.yellow
-        }}
+        } }
       >
         <Statistic.Group widths="three">
           <Statistic>

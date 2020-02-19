@@ -25,7 +25,7 @@ export const googleLogin = () => {
   firebaseApp
     .auth()
     .signInWithPopup(providers.Google)
-    .then(function(result) {
+    .then(function (result) {
       // This gives you a Google Access Token.
       let token = result.credential.accessToken;
       // The signed-in user info.
@@ -39,7 +39,7 @@ export const facebookLogin = () => {
   firebaseApp
     .auth()
     .signInWithPopup(providers.Facebook)
-    .then(function(result) {
+    .then(function (result) {
       // This gives you a Google Access Token.
       let token = result.credential.accessToken;
       // The signed-in user info.
@@ -53,7 +53,7 @@ export const twitterLogin = () => {
   firebaseApp
     .auth()
     .signInWithPopup(providers.Twitter)
-    .then(function(result) {
+    .then(function (result) {
       // This gives you a Google Access Token.
       let token = result.credential.accessToken;
       let secret = result.credential.secret;
@@ -68,7 +68,7 @@ export const emailPasswordLogin = (username, password) => {
   return firebaseApp
     .auth()
     .signInWithEmailAndPassword(username, password)
-    .catch(function(error) {
+    .catch(function (error) {
       // Handle Errors here.
       let errorCode = error.code;
       let errorMessage = error.message;
@@ -93,6 +93,8 @@ export const createEmailPasswordUser = async (
 
       let errorCode = error.code;
       let errorMessage = error.message;
+
+      console.log(`ErrorCode: ${errorCode}\nErrorMessage: ${errorMessage}`)
 
       return [errorCode, errorMessage];
     });
