@@ -1,11 +1,17 @@
-const puppeteer = require('puppeteer');
-const prompt = require('prompt');
+const puppeteer = require("puppeteer");
+const prompt = require("prompt");
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
-const getflights = async () => {
+const getflights = async (eid, pw, pnr) => {
+  console.log(eid, pnr)
   const browser = await puppeteer.launch({
-    args: ["--no-sandbox", "--disable-setuid-sandbox"]
+    headless: false,
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--auto-open-devtools-for-tabs"
+    ]
   });
   const page = await browser.newPage();
   await page.goto("https://swalife.com");
@@ -21,10 +27,22 @@ const getflights = async () => {
   await page.click("#tabs > li:nth-child(2)");
   await delay(3000);
 
-  const flight_data = await page.evaluate(() => {
+  const flight_data = await page.evaluate(pnr => {
     let flights = [];
+    let rowNumNewData;
     const table = document.querySelector("#travelHistory");
+    console.log("DOING ALL THE THINGS! " + pnr);
+
     for (let i = 1; i < table.rows.length; i++) {
+      console.log("TABLE ROW " + i);
+      if (table.rows[i].cells[0].innerText == pnr) {
+        // check to see if there is more than one leg in the pnr
+        rowNumNewData = i;
+        break;
+      }
+    }
+
+    for (let i = 1; i < rowNumNewData; i++) {
       if (table.rows[i].cells[0].innerText.includes("/")) {
         flights.push({
           PNR: table.rows[i - 1].cells[0].innerText,
@@ -48,20 +66,21 @@ const getflights = async () => {
       }
     }
     return flights;
-  });
+  }, pnr);
 
   flight_data.map(flight => {
     console.log(flight);
   });
 
   await page.screenshot({ path: "www14.swalife.png" });
-  await browser.close();
+  await delay(60);
+  // await browser.close();
 
   return flight_data;
 };
 
-let eid, pw;
 
+let eid, pw, pnr;
 prompt.start();
 prompt.get(
   [
@@ -75,12 +94,16 @@ prompt.get(
       conform: function(value) {
         return true;
       }
+    },
+    {
+      name: "lastFlownPNR",
+      required: true
     }
   ],
   function(err, result) {
     eid = result.username;
     pw = result.password;
-
-    getflights();
+    pnr = result.lastFlownPNR;
+    getflights(eid, pw, pnr);
   }
-)
+);

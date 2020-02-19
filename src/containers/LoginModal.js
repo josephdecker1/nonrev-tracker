@@ -64,7 +64,7 @@ const LoginModal = props => {
       <Modal.Content>
         <div
           css={ css`
-            height: 33vh;
+            height: 375px;
             display: flex-inline;
             text-align: center;
             align-items: center;
